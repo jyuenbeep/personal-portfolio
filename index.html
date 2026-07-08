@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jasmine Yuen — Software Engineer</title>
+  <meta name="description" content="Jasmine Yuen — CS student at Georgia Tech and software engineer. Internships at ServiceNow, Ford, and Microsoft." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=PT+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=13" />
+</head>
+<body>
+  <!-- BOOT INTRO — types a name out on a mechanical keyboard (first load only) -->
+  <div class="boot" id="boot">
+    <div class="boot__inner">
+      <div class="boot__screen"><span id="boot-text"></span><span class="boot__caret"></span></div>
+      <div class="boot__kb" id="boot-kb" aria-hidden="true"></div>
+      <button class="boot__skip" id="boot-skip" type="button">skip <kbd>↵</kbd></button>
+    </div>
+  </div>
+
+  <!-- Interactive wiggling grid background -->
+  <canvas id="grid" aria-hidden="true"></canvas>
+
+  <!-- Corner registration marks (blueprint aesthetic) -->
+  <div class="reg reg--tl" aria-hidden="true"></div>
+  <div class="reg reg--tr" aria-hidden="true"></div>
+  <div class="reg reg--bl" aria-hidden="true"></div>
+  <div class="reg reg--br" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="#top">
+      <img class="nav__icon" src="assets/icon.png?v=1" alt="" onerror="this.remove()" />
+      <span class="nav__name">Jasmine&nbsp;Yuen</span>
+    </a>
+    <nav class="nav__links">
+      <a href="#about">About</a>
+      <a href="#hobbies">Play</a>
+      <a href="#work">Work</a>
+      <a href="#projects">Projects</a>
+      <a class="nav__cta" href="#contact">Contact</a>
+    </nav>
+    <button class="nav__burger" id="burger" aria-label="Menu"><span></span><span></span></button>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="art-dots art-dots--hero" aria-hidden="true"></div>
+      <div class="hero__grid">
+        <div class="hero__left">
+          <div class="kicker"><span class="kicker__sq"></span>// software engineer · cs @ georgia tech</div>
+          <div class="hero__namerow">
+            <span class="hero__portrait">
+              <img src="assets/jasmine.jpg" alt="Portrait of Jasmine Yuen" onerror="this.remove()" />
+              JY
+            </span>
+            <div class="hero__nametext">
+              <h1 class="hero__title">
+                <span class="hero__accent">Jasmine Yuen</span><span class="cursor"></span>
+              </h1>
+              <svg class="sketch-underline" width="300" height="14" viewBox="0 0 300 14" fill="none" aria-hidden="true">
+                <path d="M3 9 Q 28 2 52 8 T 104 8 T 156 8 T 208 8 T 260 8 T 297 7" stroke="#3B6EA5" stroke-width="2.6" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+          <p class="hero__lede">
+            Computer science student at Georgia Tech (class of 2028),
+            concentrating in cybersecurity and system architecture. I've built
+            software as an intern at <em>ServiceNow</em>, <em>Ford</em>, and
+            <em>Microsoft</em>. Off the clock: mechanical keyboards, sketching,
+            and Blender.
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--solid" href="#projects">See the work <span>↗</span></a>
+            <a class="btn btn--ghost" href="#contact">Get in touch</a>
+          </div>
+          <dl class="hero__stats">
+            <div><dt>'28</dt><dd>Georgia Tech · CS</dd></div>
+            <div><dt>3</dt><dd>SWE internships</dd></div>
+            <div><dt>1K+</dt><dd>HackGT attendees</dd></div>
+          </dl>
+        </div>
+        <div class="hero__right">
+          <figure class="halftone">
+            <div class="kb-stage">
+              <canvas id="keyboard" aria-label="Halftone keycaps spelling the word code"></canvas>
+              <div class="kb-keys" id="kb-keys">
+                <button class="kb-key" type="button" data-key="c" aria-label="Press C" style="left:3.75%;top:18.33%;width:20.83%;height:63.33%;"></button>
+                <button class="kb-key" type="button" data-key="o" aria-label="Press O" style="left:27.64%;top:18.33%;width:20.83%;height:63.33%;"></button>
+                <button class="kb-key" type="button" data-key="d" aria-label="Press D" style="left:51.53%;top:18.33%;width:20.83%;height:63.33%;"></button>
+                <button class="kb-key" type="button" data-key="e" aria-label="Press E" style="left:75.42%;top:18.33%;width:20.83%;height:63.33%;"></button>
+              </div>
+            </div>
+            <figcaption>fig.01 — keycaps: c·o·d·e <span class="kb-hint">· click 'em</span></figcaption>
+          </figure>
+        </div>
+      </div>
+      <div class="scroll-hint"><span>SCROLL</span><i></i></div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section section--paper" id="about">
+      <div class="section__head">
+        <div class="kicker"><span class="kicker__sq"></span>// whoami</div>
+        <h2 class="section__title">About</h2>
+      </div>
+      <div class="about">
+        <div class="about__body">
+          <p class="lead">
+            I'm a computer science student at Georgia Tech, concentrating in
+            cybersecurity and system architecture.
+          </p>
+          <p>
+            I've interned as a software engineer at <em>ServiceNow</em>,
+            <em>Ford</em>, and <em>Microsoft</em> — building everything from an
+            AI layer over a mobile platform to cloud cost tooling and
+            incident-handling systems. I work mostly in TypeScript, React,
+            Python, and Java, and I like clear interfaces and readable code.
+          </p>
+          <p>
+            Outside of class I co-direct <em>HackGT</em>, build mechanical
+            keyboards, sketch, and model in Blender.
+          </p>
+        </div>
+        <aside class="spec">
+          <div class="spec__row"><span>ROLE</span><b>Software Engineer · Student</b></div>
+          <div class="spec__row"><span>SCHOOL</span><b>Georgia Tech · CS '28</b></div>
+          <div class="spec__row"><span>FOCUS</span><b>Cybersecurity · Systems</b></div>
+          <div class="spec__row"><span>STACK</span><b>TypeScript · React · Python</b></div>
+          <div class="spec__row"><span>BASED</span><b>Atlanta, GA</b></div>
+          <div class="spec__row"><span>STATUS</span><b class="dot">Open to 2027 internships</b></div>
+        </aside>
+      </div>
+      <div class="skills" aria-label="Technical skills">
+        <span class="skills__label">// skills</span>
+        <div class="tags">
+          <span class="tag">Java</span><span class="tag">Python</span><span class="tag">TypeScript</span>
+          <span class="tag">React</span><span class="tag">Kotlin</span><span class="tag">SQL</span>
+          <span class="tag">Flask</span><span class="tag">Node.js</span><span class="tag">HTML/CSS</span>
+          <span class="tag">Git</span><span class="tag">REST APIs</span><span class="tag">GCP</span>
+          <span class="tag">RHDH</span><span class="tag">JUnit</span><span class="tag">Blender</span>
+          <span class="tag">C</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOBBIES / PLAY -->
+    <section class="section section--cream" id="hobbies">
+      <div class="art-dots art-dots--bl" aria-hidden="true"></div>
+      <div class="section__head">
+        <div class="kicker"><span class="kicker__sq"></span>// off the clock</div>
+        <h2 class="section__title">Play</h2>
+        <p class="section__sub">The stuff I make when I'm not shipping code. Tap any card to see more.</p>
+      </div>
+      <div class="hobbies" id="hobbies-grid"></div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section class="section section--paper" id="work">
+      <div class="section__head">
+        <div class="kicker"><span class="kicker__sq"></span>// work history</div>
+        <h2 class="section__title">Experience</h2>
+        <p class="section__sub">Where I've interned and built things.</p>
+      </div>
+      <ol class="timeline" id="timeline"></ol>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="section section--cream" id="projects">
+      <div class="art-dots art-dots--tr" aria-hidden="true"></div>
+      <div class="section__head">
+        <div class="kicker"><span class="kicker__sq"></span>// selected work</div>
+        <h2 class="section__title">Projects</h2>
+        <p class="section__sub">Personal and professional projects.</p>
+      </div>
+      <div class="projects" id="projects-grid"></div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section class="section section--paper" id="education">
+      <div class="section__head">
+        <div class="kicker"><span class="kicker__sq"></span>// credentials</div>
+        <h2 class="section__title">Education</h2>
+      </div>
+      <div class="edu" id="edu"></div>
+    </section>
+  </main>
+
+  <!-- PLAY DETAIL OVERLAY (subpages, deep-linked via #play/<id>) -->
+  <div class="playview" id="playview" aria-hidden="true">
+    <div class="playview__bar">
+      <a class="playview__back" href="#hobbies" id="playview-back">← back to Play</a>
+      <span class="playview__crumb" id="playview-crumb">// play</span>
+    </div>
+    <div class="playview__inner" id="playview-inner"></div>
+  </div>
+
+  <!-- CONTACT / FOOTER -->
+  <footer class="contact" id="contact">
+    <div class="contact__inner">
+      <div class="kicker kicker--light"><span class="kicker__sq"></span>// say hello</div>
+      <h2 class="contact__title">Get in touch</h2>
+      <p class="contact__sub">
+        Open to summer 2027 internships and interesting problems. Email is the
+        best way to reach me.
+      </p>
+      <a class="contact__mail" href="mailto:jasminey023@gmail.com">jasminey023@gmail.com</a>
+      <div class="contact__links">
+        <a href="https://github.com/jyuenbeep" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="https://www.linkedin.com/in/jasmineyiyuen/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      </div>
+      <div class="contact__foot">
+        <span>© 2026 Jasmine Yuen</span>
+        <span>Hand-coded with HTML, CSS &amp; canvas.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js?v=13"></script>
+</body>
+</html>
