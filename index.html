@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jasmine Yuen — Software Engineer</title>
+  <meta name="description" content="Jasmine Yuen — CS student at Georgia Tech and software engineer. Internships at ServiceNow, Ford, and Microsoft." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=PT+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=23" />
+</head>
+<body>
+  <!-- BOOT INTRO — types a name out on a mechanical keyboard (first load only) -->
+  <div class="boot" id="boot">
+    <div class="boot__inner">
+      <div class="boot__screen"><span id="boot-text"></span><span class="boot__caret"></span></div>
+      <div class="boot__kb" id="boot-kb" aria-hidden="true"></div>
+      <button class="boot__skip" id="boot-skip" type="button">skip <kbd>↵</kbd></button>
+    </div>
+  </div>
+
+  <!-- Interactive wiggling grid background -->
+  <canvas id="grid" aria-hidden="true"></canvas>
+
+  <!-- Corner registration marks (blueprint aesthetic) -->
+  <div class="reg reg--tl" aria-hidden="true"></div>
+  <div class="reg reg--tr" aria-hidden="true"></div>
+  <div class="reg reg--bl" aria-hidden="true"></div>
+  <div class="reg reg--br" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <header class="nav" id="nav">
+    <a class="nav__brand" href="#top">
+      <img class="nav__icon" src="assets/icon.png?v=1" alt="" onerror="this.remove()" />
+      <span class="nav__name">Jasmine&nbsp;Yuen</span>
+    </a>
+    <nav class="nav__links">
+      <a href="#about">About</a>
+      <a href="#hobbies">Play</a>
+      <a href="#work">Work</a>
+      <a href="#projects">Projects</a>
+      <a class="nav__cta" href="#contact">Contact</a>
+    </nav>
+    <button class="nav__burger" id="burger" aria-label="Menu"><span></span><span></span></button>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="art-dots art-dots--hero" aria-hidden="true"></div>
+      <div class="hero__grid">
+        <div class="hero__left">
+          <div class="kicker"><span class="kicker__sq"></span>// software engineer · cs @ georgia tech</div>
+          <div class="hero__namerow">
+            <span class="hero__portrait">
+              <img src="assets/jasmine.jpg" alt="Portrait of Jasmine Yuen" onerror="this.remove()" />
+              JY
+            </span>
+            <div class="hero__nametext">
+              <h1 class="hero__title">
+                <span class="hero__accent">Jasmine Yuen</span><span class="cursor"></span>
+              </h1>
+              <svg class="sketch-underline" width="300" height="14" viewBox="0 0 300 14" fill="none" aria-hidden="true">
+                <path d="M3 9 Q 28 2 52 8 T 104 8 T 156 8 T 208 8 T 260 8 T 297 7" stroke="#3B6EA5" stroke-width="2.6" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+          <p class="hero__lede">
+            Computer science student at Georgia Tech (class of 2028),
+            concentrating in cybersecurity and system architecture. I've built
+            software as an intern at <em>ServiceNow</em>, <em>Ford</em>, and
+            <em>Microsoft</em>. Off the clock: mechanical keyboards, sketching,
+            and Blender.
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--solid" href="#projects">See the work <span>↗</span></a>
+            <a class="btn btn--ghost" href="#contact">Get in touch</a>
+          </div>
+        </div>
+        <div class="hero__right">
+          <figure class="halftone">
+            <div class="code-keys" id="code-keys">
+              <button class="code-key" type="button" data-word="c" aria-label="Press C"><canvas></canvas></button>
+              <button class="code-key" type="button" data-word="o" aria-label="Press O"><canvas></canvas></button>
+              <button class="code-key" type="button" data-word="d" aria-label="Press D"><canvas></canvas></button>
+              <button class="code-key" type="button" data-word="e" aria-label="Press E"><canvas></canvas></button>
+            </div>
+            <figcaption>fig.01 — keycaps: c·o·d·e <span class="kb-hint">· press 'em</span></figcaption>
+          </figure>
+        </div>
+      </div>
+      <div class="scroll-hint"><span>SCROLL</span><i></i></div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section section--paper" id="about">
+      <div class="section__head">
+        <div class="kicker"><span class="kicker__sq"></span>// whoami</div>
+        <h2 class="section__title">About</h2>
+      </div>
+      <div class="about">
+        <div class="about__body">
+          <p class="lead">
+            I care about the parts of software people never notice — the
+            interface that gets out of the way, and the system underneath that
+            holds up when it matters.
+          </p>
+          <p>
+            Security and systems pull me in because I like understanding how
+            something works all the way down, then making it feel simple on the
+            surface. Most of my time goes to turning fuzzy, open-ended problems
+            into interfaces and code other people can actually build on — and I'd
+            rather ship something clear and readable than clever.
+          </p>
+          <p>
+            That same eye for detail is why I build keyboards, sketch, and model
+            in Blender: I like things that are considered, tactile, and a little
+            bit fun. It's also why I co-direct <em>HackGT</em> — putting on
+            something a thousand people show up to is its own kind of engineering.
+          </p>
+        </div>
+        <aside class="spec">
+          <div class="spec__row"><span>ROLE</span><b>Software Engineer · Student</b></div>
+          <div class="spec__row"><span>SCHOOL</span><b>Georgia Tech · CS '28</b></div>
+          <div class="spec__row"><span>FOCUS</span><b>Cybersecurity · Systems</b></div>
+          <div class="spec__row"><span>STACK</span><b>TypeScript · React · Python</b></div>
+          <div class="spec__row"><span>BASED</span><b>Atlanta, GA</b></div>
+          <div class="spec__row"><span>STATUS</span><b class="dot">Open to 2027 internships</b></div>
+        </aside>
+      </div>
+      <div class="skills" aria-label="Technical skills">
+        <span class="skills__label">// skills</span>
+        <div class="tags">
+          <span class="tag">Java</span><span class="tag">Python</span><span class="tag">TypeScript</span>
+          <span class="tag">React</span><span class="tag">Kotlin</span><span class="tag">SQL</span>
+          <span class="tag">Flask</span><span class="tag">Node.js</span><span class="tag">HTML/CSS</span>
+          <span class="tag">Git</span><span class="tag">REST APIs</span><span class="tag">GCP</span>
+          <span class="tag">RHDH</span><span class="tag">JUnit</span><span class="tag">Blender</span>
+          <span class="tag">C</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOBBIES / PLAY — the whole section is a Mac text-editor window -->
+    <section class="section" id="hobbies">
+      <div class="art-dots art-dots--bl" aria-hidden="true"></div>
+      <div class="desktop">
+        <img class="desktop__bg" src="assets/play-bg.jpg" alt="" onerror="this.remove()" />
+        <div class="menubar" aria-hidden="true">
+          <span class="menubar__left">
+            <img class="menubar__logo" src="assets/icon.png" alt="" onerror="this.remove()" />
+            <b>Play</b><span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Window</span><span>Help</span>
+          </span>
+          <span class="menubar__right" id="menubar-clock"></span>
+        </div>
+        <div class="deskwins">
+          <!-- main note: intro + clickable app icons -->
+          <div class="playwin playwin--main">
+            <div class="playwin__bar">
+              <span class="playwin__lights"><i></i><i></i><i></i></span>
+              <span class="playwin__name">play.txt</span>
+            </div>
+            <div class="playwin__doc">
+              <div class="playwin__text">
+                <span class="doc-com">// off the clock</span>
+                <h2 class="doc-h"><span class="doc-hash">#</span> play</h2>
+                <p class="doc-p">The stuff I make when I'm not shipping code. Click an app on the desktop to learn more.<span class="doc-caret" aria-hidden="true"></span></p>
+              </div>
+            </div>
+          </div>
+          <!-- side note: other hobbies, just a list -->
+          <div class="playwin playwin--side">
+            <div class="playwin__bar">
+              <span class="playwin__lights"><i></i><i></i><i></i></span>
+              <span class="playwin__name">more.txt</span>
+            </div>
+            <div class="playwin__doc">
+              <span class="doc-com">// also into</span>
+              <ul class="notelist">
+                <li>hiking</li>
+                <li>traveling</li>
+                <li>bouldering</li>
+                <li>music</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!-- app icons sitting on the desktop -->
+        <div class="deskapps" id="hobbies-grid"></div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section class="section section--paper" id="work">
+      <div class="section__head">
+        <div class="kicker"><span class="kicker__sq"></span>// work history</div>
+        <h2 class="section__title">Experience</h2>
+        <p class="section__sub">Where I've interned and built things.</p>
+      </div>
+      <ol class="timeline" id="timeline"></ol>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="section section--cream" id="projects">
+      <div class="art-dots art-dots--tr" aria-hidden="true"></div>
+      <div class="section__head">
+        <div class="kicker"><span class="kicker__sq"></span>// selected work</div>
+        <h2 class="section__title">Projects</h2>
+        <p class="section__sub">Personal and professional projects.</p>
+      </div>
+      <div class="projects" id="projects-grid"></div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section class="section section--paper" id="education">
+      <div class="section__head">
+        <div class="kicker"><span class="kicker__sq"></span>// credentials</div>
+        <h2 class="section__title">Education</h2>
+      </div>
+      <div class="edu" id="edu"></div>
+    </section>
+  </main>
+
+  <!-- PLAY DETAIL OVERLAY (subpages, deep-linked via #play/<id>) -->
+  <div class="playview" id="playview" aria-hidden="true">
+    <div class="playview__bar">
+      <a class="playview__back" href="#hobbies" id="playview-back">← back to Play</a>
+      <span class="playview__crumb" id="playview-crumb">// play</span>
+    </div>
+    <div class="playview__inner" id="playview-inner"></div>
+  </div>
+
+  <!-- CONTACT / FOOTER -->
+  <footer class="contact" id="contact">
+    <div class="contact__inner">
+      <div class="kicker kicker--light"><span class="kicker__sq"></span>// say hello</div>
+      <h2 class="contact__title">Get in touch</h2>
+      <p class="contact__sub">
+        Open to summer 2027 internships and interesting problems. Email is the
+        best way to reach me.
+      </p>
+      <span class="contact__mail">jasminey023 at gmail dot com</span>
+      <div class="contact__links">
+        <a href="https://github.com/jyuenbeep" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="https://www.linkedin.com/in/jasmineyiyuen/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      </div>
+      <div class="contact__foot">
+        <span>© 2026 Jasmine Yuen</span>
+        <span>Hand-coded with HTML, CSS &amp; canvas.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="main.js?v=21"></script>
+</body>
+</html>
