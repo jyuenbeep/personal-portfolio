@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=PT+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=23" />
+  <link rel="stylesheet" href="styles.css?v=32" />
 </head>
 <body>
   <!-- BOOT INTRO — types a name out on a mechanical keyboard (first load only) -->
@@ -62,7 +62,7 @@
                 <span class="hero__accent">Jasmine Yuen</span><span class="cursor"></span>
               </h1>
               <svg class="sketch-underline" width="300" height="14" viewBox="0 0 300 14" fill="none" aria-hidden="true">
-                <path d="M3 9 Q 28 2 52 8 T 104 8 T 156 8 T 208 8 T 260 8 T 297 7" stroke="#3B6EA5" stroke-width="2.6" stroke-linecap="round"/>
+                <path d="M3 9 Q 28 2 52 8 T 104 8 T 156 8 T 208 8 T 260 8 T 297 7" stroke="#507DBC" stroke-width="2.6" stroke-linecap="round"/>
               </svg>
             </div>
           </div>
@@ -93,42 +93,67 @@
       <div class="scroll-hint"><span>SCROLL</span><i></i></div>
     </section>
 
-    <!-- ABOUT -->
-    <section class="section section--paper" id="about">
+    <!-- ABOUT — pins in place; scrolling down drives the carousel sideways -->
+    <section class="section section--paper about-pin" id="about">
+      <div class="about-pin__sticky" id="about-sticky">
       <div class="section__head">
         <div class="kicker"><span class="kicker__sq"></span>// whoami</div>
         <h2 class="section__title">About</h2>
       </div>
-      <div class="about">
-        <div class="about__body">
-          <p class="lead">
-            I care about the parts of software people never notice — the
-            interface that gets out of the way, and the system underneath that
-            holds up when it matters.
-          </p>
-          <p>
-            Security and systems pull me in because I like understanding how
-            something works all the way down, then making it feel simple on the
-            surface. Most of my time goes to turning fuzzy, open-ended problems
-            into interfaces and code other people can actually build on — and I'd
-            rather ship something clear and readable than clever.
-          </p>
-          <p>
-            That same eye for detail is why I build keyboards, sketch, and model
-            in Blender: I like things that are considered, tactile, and a little
-            bit fun. It's also why I co-direct <em>HackGT</em> — putting on
-            something a thousand people show up to is its own kind of engineering.
-          </p>
+      <div class="acar" id="acar" aria-roledescription="carousel" aria-label="About me">
+        <div class="acar__viewport">
+          <div class="acar__track" id="acar-track">
+          <div class="acar__slide is-active">
+            <p class="acar__text acar__text--lead">
+              I care about the parts of software people never notice — the
+              interface that gets out of the way, and the system underneath that
+              holds up when it matters.
+            </p>
+          </div>
+          <div class="acar__slide">
+            <p class="acar__text">
+              Security and systems pull me in because I like understanding how
+              something works all the way down, then making it feel simple on the
+              surface. Most of my time goes to turning fuzzy, open-ended problems
+              into interfaces and code other people can actually build on — and I'd
+              rather ship something clear and readable than clever.
+            </p>
+          </div>
+          <div class="acar__slide">
+            <p class="acar__text">
+              That same eye for detail is why I build keyboards, sketch, and model
+              in Blender: I like things that are considered, tactile, and a little
+              bit fun. It's also why I co-direct <em>HackGT</em> — putting on
+              something a thousand people show up to is its own kind of engineering.
+            </p>
+          </div>
+          <div class="acar__slide">
+            <aside class="spec">
+              <div class="spec__row"><span>ROLE</span><b>Software Engineer · Student</b></div>
+              <div class="spec__row"><span>SCHOOL</span><b>Georgia Tech · CS '28</b></div>
+              <div class="spec__row"><span>FOCUS</span><b>Cybersecurity · Systems</b></div>
+              <div class="spec__row"><span>STACK</span><b>TypeScript · React · Python</b></div>
+              <div class="spec__row"><span>BASED</span><b>Atlanta, GA</b></div>
+              <div class="spec__row"><span>STATUS</span><b class="dot">Open to 2027 internships</b></div>
+            </aside>
+          </div>
+          <div class="acar__slide">
+            <div class="acar__collage" aria-label="Photos">
+              <figure class="acar__ph acar__ph--a"><img src="assets/about/01.jpg" alt="" onerror="this.parentElement.classList.add('is-empty'); this.remove();" /><span class="acar__ph-hint">01.jpg</span></figure>
+              <figure class="acar__ph acar__ph--b"><img src="assets/about/02.jpg" alt="" onerror="this.parentElement.classList.add('is-empty'); this.remove();" /><span class="acar__ph-hint">02.jpg</span></figure>
+              <figure class="acar__ph acar__ph--c"><img src="assets/about/03.jpg" alt="" onerror="this.parentElement.classList.add('is-empty'); this.remove();" /><span class="acar__ph-hint">03.jpg</span></figure>
+              <figure class="acar__ph acar__ph--d"><img src="assets/about/04.jpg" alt="" onerror="this.parentElement.classList.add('is-empty'); this.remove();" /><span class="acar__ph-hint">04.jpg</span></figure>
+              <figure class="acar__ph acar__ph--e"><img src="assets/about/05.jpg" alt="" onerror="this.parentElement.classList.add('is-empty'); this.remove();" /><span class="acar__ph-hint">05.jpg</span></figure>
+            </div>
+          </div>
+          </div>
         </div>
-        <aside class="spec">
-          <div class="spec__row"><span>ROLE</span><b>Software Engineer · Student</b></div>
-          <div class="spec__row"><span>SCHOOL</span><b>Georgia Tech · CS '28</b></div>
-          <div class="spec__row"><span>FOCUS</span><b>Cybersecurity · Systems</b></div>
-          <div class="spec__row"><span>STACK</span><b>TypeScript · React · Python</b></div>
-          <div class="spec__row"><span>BASED</span><b>Atlanta, GA</b></div>
-          <div class="spec__row"><span>STATUS</span><b class="dot">Open to 2027 internships</b></div>
-        </aside>
       </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="section section--paper section--skills">
       <div class="skills" aria-label="Technical skills">
         <span class="skills__label">// skills</span>
         <div class="tags">
@@ -165,7 +190,7 @@
               <div class="playwin__text">
                 <span class="doc-com">// off the clock</span>
                 <h2 class="doc-h"><span class="doc-hash">#</span> play</h2>
-                <p class="doc-p">The stuff I make when I'm not shipping code. Click an app on the desktop to learn more.<span class="doc-caret" aria-hidden="true"></span></p>
+                <p class="doc-p">Things I have a passion for. Click to learn more and move around the icons!<span class="doc-caret" aria-hidden="true"></span></p>
               </div>
             </div>
           </div>
@@ -252,6 +277,6 @@
     </div>
   </footer>
 
-  <script src="main.js?v=21"></script>
+  <script src="main.js?v=32"></script>
 </body>
 </html>

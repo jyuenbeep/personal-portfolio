@@ -102,8 +102,8 @@
       for (let y = gap / 2; y < H; y += gap) {
         for (let x = gap / 2; x < W; x += gap) {
           const inGlyph = data[((y | 0) * W + (x | 0)) * 4 + 3] > 128;
-          if (inGlyph) { ctx.fillStyle = pressed ? "rgba(59,110,165,0.98)" : "rgba(20,32,58,0.92)"; ctx.beginPath(); ctx.arc(x, y, 1.7, 0, Math.PI * 2); ctx.fill(); }
-          else { ctx.fillStyle = pressed ? "rgba(108,155,201,0.85)" : "rgba(108,155,201,0.42)"; ctx.beginPath(); ctx.arc(x, y, 1.15, 0, Math.PI * 2); ctx.fill(); }
+          if (inGlyph) { ctx.fillStyle = pressed ? "rgba(80,125,188,0.98)" : "rgba(4,8,15,0.92)"; ctx.beginPath(); ctx.arc(x, y, 1.7, 0, Math.PI * 2); ctx.fill(); }
+          else { ctx.fillStyle = pressed ? "rgba(161,198,234,0.85)" : "rgba(161,198,234,0.42)"; ctx.beginPath(); ctx.arc(x, y, 1.15, 0, Math.PI * 2); ctx.fill(); }
         }
       }
     }
@@ -206,7 +206,7 @@
           const p = pts[r][c];
           c === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
         }
-        ctx.strokeStyle = "rgba(29,58,110,0.06)";
+        ctx.strokeStyle = "rgba(44,74,117,0.06)";
         ctx.stroke();
       }
       // vertical lines
@@ -216,7 +216,7 @@
           const p = pts[r][c];
           r === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
         }
-        ctx.strokeStyle = "rgba(29,58,110,0.06)";
+        ctx.strokeStyle = "rgba(44,74,117,0.06)";
         ctx.stroke();
       }
       // highlight displaced nodes near cursor
@@ -229,7 +229,7 @@
               const a = Math.min(off / 30, 0.6);
               ctx.beginPath();
               ctx.arc(p.x, p.y, 1.6, 0, Math.PI * 2);
-              ctx.fillStyle = "rgba(59,110,165," + a + ")";
+              ctx.fillStyle = "rgba(80,125,188," + a + ")";
               ctx.fill();
             }
           }
@@ -322,16 +322,16 @@
         for (let px = S / 2; px < KW; px += S) {
           if (ink(letterData, px, py)) {
             const wave = Math.sin((px * 0.045) + (py * 0.05) + tick) * 0.5 + 0.5;
-            ctx.fillStyle = "rgba(59,110,165,0.98)";
+            ctx.fillStyle = "rgba(80,125,188,0.98)";
             ctx.beginPath(); ctx.arc(px, py, 3.4 + wave * 1.4, 0, Math.PI * 2); ctx.fill();
           } else if (ink(borderData, px, py)) {
-            ctx.fillStyle = "rgba(29,58,110,0.55)";
+            ctx.fillStyle = "rgba(44,74,117,0.55)";
             ctx.beginPath(); ctx.arc(px, py, 2.1, 0, Math.PI * 2); ctx.fill();
           } else if (ink(capData, px, py)) {
-            ctx.fillStyle = "rgba(29,58,110,0.14)";
+            ctx.fillStyle = "rgba(44,74,117,0.14)";
             ctx.beginPath(); ctx.arc(px, py, 1.3, 0, Math.PI * 2); ctx.fill();
           } else {
-            ctx.fillStyle = "rgba(29,58,110,0.10)";
+            ctx.fillStyle = "rgba(44,74,117,0.10)";
             ctx.beginPath(); ctx.arc(px, py, 1.1, 0, Math.PI * 2); ctx.fill();
           }
         }
@@ -412,17 +412,17 @@
           const idx = ((y | 0) * W + (x | 0)) * 4 + 3;
           if (base[idx] > 128) {
             if (y <= faceBottom) {                          // top face
-              if (gd[idx] > 128) { ctx.fillStyle = pressed ? "rgba(59,110,165,0.98)" : "rgba(20,32,58,0.92)"; ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2); ctx.fill(); }
-              else { ctx.fillStyle = pressed ? "rgba(108,155,201,0.72)" : "rgba(108,155,201,0.4)"; ctx.beginPath(); ctx.arc(x, y, 1.15, 0, Math.PI * 2); ctx.fill(); }
+              if (gd[idx] > 128) { ctx.fillStyle = pressed ? "rgba(80,125,188,0.98)" : "rgba(4,8,15,0.92)"; ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2); ctx.fill(); }
+              else { ctx.fillStyle = pressed ? "rgba(161,198,234,0.72)" : "rgba(161,198,234,0.4)"; ctx.beginPath(); ctx.arc(x, y, 1.15, 0, Math.PI * 2); ctx.fill(); }
             } else {                                        // bottom edge — darker toward the base = thickness
               const t = edge ? (y - faceBottom) / edge : 0;
-              ctx.fillStyle = "rgba(20,32,58," + (0.32 + 0.4 * t) + ")";
+              ctx.fillStyle = "rgba(4,8,15," + (0.32 + 0.4 * t) + ")";
               ctx.beginPath(); ctx.arc(x, y, 1.4 + 0.6 * t, 0, Math.PI * 2); ctx.fill();
             }
           } else if (!pressed && y > capBot && y < shBot && x > padX + 6 && x < W - padX + 8) {
             // soft halftone drop shadow beneath the risen cap
             const t = (y - capBot) / (shBot - capBot);
-            ctx.fillStyle = "rgba(20,32,58," + (0.14 * (1 - t)) + ")";
+            ctx.fillStyle = "rgba(4,8,15," + (0.14 * (1 - t)) + ")";
             ctx.beginPath(); ctx.arc(x + 3, y, 1.1, 0, Math.PI * 2); ctx.fill();
           }
         }
@@ -473,19 +473,21 @@
       tags: ["React", "TypeScript", "Mantine", "Vite", "Docker"] },
   ];
 
+  // video: paste a YouTube link or an .mp4 path (e.g. "assets/demos/schematic.mp4")
+  // and it embeds automatically; leave "" for the placeholder.
   const projects = [
     { idx: "01", glyph: "◈", name: "Schematic", tag: "Dev tooling", stat: "2026 — now",
       tldr: "Catches breaking API changes before your users do.",
       desc: "A schema-diff engine that takes cron snapshots of API responses, detects breaking changes, and fires severity-ranked alerts. Secured with JWT auth, bcrypt, and parameterized queries.",
-      stack: "Node.js · Express · PostgreSQL · Prisma", repo: "https://github.com/jyuenbeep" },
+      stack: "Node.js · Express · PostgreSQL · Prisma", repo: "https://github.com/jyuenbeep", video: "" },
     { idx: "02", glyph: "⬡", name: "SecureHub", tag: "Cybersecurity · 2nd place", stat: "8-person team",
       tldr: "A security-awareness app that turns habits into data.",
       desc: "Led an 8-member team building a cybersecurity awareness app with data visualizations. Took 2nd place. Python analytics with pandas and matplotlib over a Flask + SQLite backend.",
-      stack: "Python · Flask · SQLite · Kubernetes", repo: "https://github.com/jyuenbeep" },
+      stack: "Python · Flask · SQLite · Kubernetes", repo: "https://github.com/jyuenbeep", video: "" },
     { idx: "03", glyph: "❋", name: "WanderSync", tag: "Android app", stat: "lead dev",
       tldr: "Plan a trip together, in real time.",
       desc: "Lead developer on an Android travel-itinerary app backed by Firebase Realtime Database. Built in Android Studio with Java, shipped through a Git / SonarQube / Agile workflow.",
-      stack: "Java · Android · Firebase", repo: "https://github.com/jyuenbeep" },
+      stack: "Java · Android · Firebase", repo: "https://github.com/jyuenbeep", video: "" },
   ];
 
   const education = [
@@ -552,20 +554,34 @@
       </div>
     </li>`)));
 
-  // Projects
+  // Projects — one per row: content on the left, demo video slot on the right
+  function projectMediaHTML(p) {
+    if (p.video && /youtu/.test(p.video)) {
+      const id = (p.video.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{6,})/) || [])[1];
+      if (id) return `<iframe src="https://www.youtube-nocookie.com/embed/${id}" title="${p.name} demo" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+    }
+    if (p.video) return `<video src="${p.video}" controls preload="metadata"></video>`;
+    return `<div class="card__media-ph">
+      <span class="card__play" aria-hidden="true">▶</span>
+      <span class="card__media-cap">${p.name.toLowerCase()}-demo.mp4 — coming soon</span>
+    </div>`;
+  }
   const pg = document.getElementById("projects-grid");
   if (pg) projects.forEach(p => pg.appendChild(el(`
     <article class="card reveal">
-      <div class="card__top"><span class="card__idx">PROJECT ${p.idx}</span><span class="card__stat">${p.stat}</span></div>
-      <div class="card__glyph">${p.glyph}</div>
-      <h3>${p.name}</h3>
-      <div class="card__tag">${p.tag}</div>
-      <p class="card__tldr">${p.tldr}</p>
-      <p class="card__desc">${p.desc}</p>
-      <div class="card__foot">
-        <span class="card__stack">${p.stack}</span>
-        <a class="card__link" href="${p.repo}" target="_blank" rel="noopener"><span class="card__gh">▸</span> View on GitHub ↗</a>
+      <div class="card__content">
+        <div class="card__top"><span class="card__idx">PROJECT ${p.idx}</span><span class="card__stat">${p.stat}</span></div>
+        <div class="card__glyph">${p.glyph}</div>
+        <h3>${p.name}</h3>
+        <div class="card__tag">${p.tag}</div>
+        <p class="card__tldr">${p.tldr}</p>
+        <p class="card__desc">${p.desc}</p>
+        <div class="card__foot">
+          <span class="card__stack">${p.stack}</span>
+          <a class="card__link" href="${p.repo}" target="_blank" rel="noopener"><span class="card__gh">▸</span> View on GitHub ↗</a>
+        </div>
       </div>
+      <div class="card__media">${projectMediaHTML(p)}</div>
     </article>`)));
 
   // Education
@@ -596,32 +612,168 @@
     hg.appendChild(card);
   });
 
-  // Desktop icons can be picked up and moved around, like on a real Mac
-  function makeDraggable(icon) {
-    let sx, sy, ox, oy, down = false, moved = false;
-    icon.style.touchAction = "none";
-    icon.addEventListener("pointerdown", (e) => {
+  // Anything on the desktop can be picked up and moved, like on a real Mac.
+  // Pass a handle (e.g. a window's title bar) to restrict where the grab starts.
+  function makeDraggable(el2, handle) {
+    const h = handle || el2;
+    let sx, sy, ox, oy, origL, origT, r0, b0, down = false, moved = false;
+    h.style.touchAction = "none";
+    h.addEventListener("pointerdown", (e) => {
       down = true; moved = false;
       sx = e.clientX; sy = e.clientY;
-      const m = /translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/.exec(icon.style.transform || "");
+      const m = /translate\((-?[\d.]+)px,\s*(-?[\d.]+)px\)/.exec(el2.style.transform || "");
       ox = m ? parseFloat(m[1]) : 0; oy = m ? parseFloat(m[2]) : 0;
-      try { icon.setPointerCapture(e.pointerId); } catch (err) {}
+      // untransformed origin + desktop bounds, so the drag can be clamped
+      r0 = el2.getBoundingClientRect();
+      origL = r0.left - ox; origT = r0.top - oy;
+      const dk = el2.closest(".desktop");
+      b0 = dk ? dk.getBoundingClientRect() : null;
+      try { h.setPointerCapture(e.pointerId); } catch (err) {}
     });
-    icon.addEventListener("pointermove", (e) => {
+    h.addEventListener("pointermove", (e) => {
       if (!down) return;
-      const dx = e.clientX - sx, dy = e.clientY - sy;
-      if (!moved && Math.hypot(dx, dy) > 5) { moved = true; icon.classList.add("is-dragging"); }
-      if (moved) icon.style.transform = "translate(" + (ox + dx) + "px," + (oy + dy) + "px)";
+      let nx = ox + (e.clientX - sx), ny = oy + (e.clientY - sy);
+      if (!moved && Math.hypot(nx - ox, ny - oy) > 5) { moved = true; el2.classList.add("is-dragging"); }
+      if (!moved) return;
+      if (b0) {
+        // keep it reachable: grab bar below the menu bar, never off the edges
+        const minL = b0.left - r0.width + 80, maxL = b0.right - 80;
+        const minT = b0.top + 34, maxT = b0.bottom - 56;
+        nx = Math.min(Math.max(nx, minL - origL), maxL - origL);
+        ny = Math.min(Math.max(ny, minT - origT), maxT - origT);
+      }
+      el2.style.transform = "translate(" + nx + "px," + ny + "px)";
     });
     const end = () => {
       if (!down) return;
       down = false;
-      icon.classList.remove("is-dragging");
-      if (moved) { icon.dataset.dragged = "1"; setTimeout(() => { delete icon.dataset.dragged; }, 0); }
+      el2.classList.remove("is-dragging");
+      if (moved) { el2.dataset.dragged = "1"; setTimeout(() => { delete el2.dataset.dragged; }, 0); }
     };
-    icon.addEventListener("pointerup", end);
-    icon.addEventListener("pointercancel", end);
+    h.addEventListener("pointerup", end);
+    h.addEventListener("pointercancel", end);
   }
+
+  // The note windows drag by their title bars; clicking one brings it to front
+  (function desktopWindows() {
+    let ztop = 10;
+    document.querySelectorAll(".playwin").forEach(win => {
+      const bar = win.querySelector(".playwin__bar");
+      if (!bar) return;
+      makeDraggable(win, bar);
+      win.addEventListener("pointerdown", () => { win.style.zIndex = ++ztop; });
+    });
+  })();
+
+  // Decorative desktop clutter — folders and files that drag around (and do
+  // a little "nope" shake when opened, because there's nothing inside)
+  (function deskClutter() {
+    if (!hg) return;
+    const FOLDER_SVG = `<svg viewBox="0 0 60 46" aria-hidden="true"><path d="M2 8 q0-5 5-5 h13 l5 5 h28 q5 0 5 5 v22 q0 5-5 5 H7 q-5 0-5-5 z" fill="#A1C6EA"/><path d="M2 14 h56 v21 q0 5-5 5 H7 q-5 0-5-5 z" fill="#BBD1EA"/></svg>`;
+    const FILE_SVG = `<svg viewBox="0 0 44 56" aria-hidden="true"><path d="M4 6 q0-4 4-4 h20 l12 12 v36 q0 4-4 4 H8 q-4 0-4-4 z" fill="#FDFDFB" stroke="#BCCAD1"/><path d="M28 2 l12 12 h-9 q-3 0-3-3 z" fill="#BBD1EA" stroke="#BCCAD1" stroke-width=".8"/><g stroke="#B7BCC4" stroke-width="2" stroke-linecap="round"><line x1="12" y1="26" x2="32" y2="26"/><line x1="12" y1="33" x2="32" y2="33"/><line x1="12" y1="40" x2="25" y2="40"/></g></svg>`;
+    const deco = [
+      { kind: "folder", label: "hikes", dx: 10, dy: 34 },
+      { kind: "folder", label: "playlists", dx: -8, dy: 6 },
+      { kind: "file", label: "todo.txt", dx: 26, dy: 40 },
+      { kind: "file", label: "schedule.png", dx: 4, dy: -6 },
+    ];
+    deco.forEach(d => {
+      const item = el(`
+        <button type="button" class="appicon appicon--deco reveal" aria-label="${d.label}" style="transform: translate(${d.dx}px, ${d.dy}px)">
+          <span class="appicon__tile appicon__tile--plain">${d.kind === "folder" ? FOLDER_SVG : FILE_SVG}</span>
+          <span class="appicon__label">${d.label}</span>
+        </button>`);
+      item.addEventListener("click", () => {
+        if (item.dataset.dragged) return;
+        item.classList.add("is-nope");
+        setTimeout(() => item.classList.remove("is-nope"), 450);
+      });
+      makeDraggable(item);
+      hg.appendChild(item);
+    });
+  })();
+
+  // About carousel — the section pins in place and vertical scroll drives
+  // the slides sideways. Falls back to a button/swipe carousel on mobile
+  // and for reduced-motion users.
+  (function aboutCarousel() {
+    const root = document.getElementById("acar");
+    const section = document.querySelector(".about-pin");
+    const sticky = document.getElementById("about-sticky");
+    const track = document.getElementById("acar-track");
+    if (!root || !section || !sticky || !track) return;
+    const slides = [].slice.call(track.querySelectorAll(".acar__slide"));
+    const viewport = root.querySelector(".acar__viewport");
+    const count = document.getElementById("acar-count");
+    const pad2 = (n) => String(n).padStart(2, "0");
+    const N = slides.length;
+    const STICKY_TOP = 64;              // matches .about-pin__sticky top
+    let STEP = 0, total = 0, pinned = false, cur = 0, baseOff = 0;
+
+    function setActive(i) {
+      cur = Math.max(0, Math.min(N - 1, i));
+      slides.forEach((s, k) => s.classList.toggle("is-active", k === cur));
+      if (count) count.textContent = pad2(cur + 1) + " / " + pad2(N);
+    }
+    function layout() {
+      pinned = window.innerWidth > 760 && !reduce;
+      if (!pinned) {
+        section.style.height = "";
+        root.classList.add("acar--manual");
+        track.style.transform = "translateX(" + (-cur * 100) + "%)";
+        return;
+      }
+      root.classList.remove("acar--manual");
+      STEP = Math.max(320, Math.round(window.innerHeight * 0.55));
+      total = STEP * (N - 1);
+      section.style.height = "";
+      // measure the sticky's natural offset with stickiness disabled —
+      // offsetTop on a pinned sticky element includes its shift
+      sticky.style.position = "static";
+      baseOff = sticky.offsetTop;
+      const natural = section.offsetHeight;
+      sticky.style.position = "";
+      section.style.height = (natural + total) + "px";
+      onScroll();
+    }
+    function onScroll() {
+      if (!pinned) return;
+      const rect = section.getBoundingClientRect();
+      const raw = STICKY_TOP - rect.top - baseOff;
+      const p = Math.max(0, Math.min(1, total ? raw / total : 0));
+      track.style.transform = "translateX(" + (-p * (N - 1) * viewport.clientWidth) + "px)";
+      setActive(Math.round(p * (N - 1)));
+    }
+    function goTo(i) {
+      const target = Math.max(0, Math.min(N - 1, i));
+      if (!pinned) {
+        setActive(target);
+        track.style.transform = "translateX(" + (-cur * 100) + "%)";
+        return;
+      }
+      const rect = section.getBoundingClientRect();
+      const top = rect.top + window.scrollY + baseOff - STICKY_TOP + target * STEP;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
+    const prevBtn = document.getElementById("acar-prev");
+    const nextBtn = document.getElementById("acar-next");
+    if (prevBtn) prevBtn.addEventListener("click", () => goTo(cur - 1));
+    if (nextBtn) nextBtn.addEventListener("click", () => goTo(cur + 1));
+    // swipe (manual mode only — in pinned mode the page scroll drives it)
+    let tx = null;
+    root.addEventListener("touchstart", (e) => { tx = e.touches[0].clientX; }, { passive: true });
+    root.addEventListener("touchend", (e) => {
+      if (tx == null || pinned) { tx = null; return; }
+      const dx = e.changedTouches[0].clientX - tx;
+      if (Math.abs(dx) > 44) goTo(cur + (dx < 0 ? 1 : -1));
+      tx = null;
+    }, { passive: true });
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    let rz2; window.addEventListener("resize", () => { clearTimeout(rz2); rz2 = setTimeout(layout, 150); });
+    setActive(0);
+    layout();
+  })();
 
   // Live clock in the desktop menu bar
   (function menubarClock() {
@@ -712,7 +864,7 @@
       for (let x = S / 2; x < W; x += S) {
         const wave = Math.sin(x * 0.06) * Math.cos(y * 0.06) * 0.5 + 0.5;
         const r = 1 + wave * maxR;
-        ctx.fillStyle = "rgba(150,185,224," + (0.28 + wave * 0.5) + ")";
+        ctx.fillStyle = "rgba(161,198,234," + (0.28 + wave * 0.5) + ")";
         ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
       }
     }
