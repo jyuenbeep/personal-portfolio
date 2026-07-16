@@ -182,6 +182,17 @@ main, .nav, .contact { position: relative; z-index: 1; }
 .hero__lede a:hover { background: var(--sky); }
 
 .hero__actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero__socials { display: flex; gap: 14px; }
+.hero__social {
+  width: 48px; height: 48px; border-radius: 11px;
+  display: grid; place-items: center;
+  color: var(--navy); background: var(--white);
+  border: 1.5px solid var(--line-dk);
+  transition: transform .18s var(--ease), background .2s var(--ease), border-color .2s var(--ease), color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.hero__social svg { width: 22px; height: 22px; display: block; }
+.hero__social:hover { background: var(--navy); border-color: var(--navy); color: #fff; transform: translateY(-3px); box-shadow: 0 10px 20px -8px rgba(4,8,15,.4); }
+.hero__social:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 .btn {
   font-family: var(--mono); font-size: 13.5px; text-decoration: none; padding: 12px 20px; border-radius: 5px;
   display: inline-flex; align-items: center; gap: 8px;
