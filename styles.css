@@ -48,7 +48,7 @@ a { color: inherit; }
 
 /* typed greeting on the wallpaper */
 .greet {
-  position: absolute; z-index: 1; left: 56px; top: calc(var(--menubar-h) + 44px); right: 140px;
+  position: absolute; z-index: 1; left: 56px; top: calc(var(--menubar-h) + 44px); right: 440px;
   font: 500 clamp(24px, 3.4vw, 50px)/1.25 var(--mono);
   color: rgba(255, 255, 255, 0.6);
   text-shadow: 0 1px 14px rgba(0, 0, 0, 0.18);
@@ -62,6 +62,44 @@ a { color: inherit; }
 }
 .greet.is-typing .greet__caret { animation: none; }
 @keyframes blink { 50% { opacity: 0; } }
+
+/* art board widget — fixed on the desktop, below windows */
+:root { --widget-w: 300px; }
+.widget {
+  position: absolute; z-index: 3;
+  top: calc(var(--menubar-h) + 14px); right: 16px;
+  width: var(--widget-w); height: min(560px, calc(100vh - var(--menubar-h) - 130px));
+  display: flex; flex-direction: column;
+  background: rgba(245, 243, 240, 0.72);
+  backdrop-filter: blur(30px) saturate(1.6);
+  -webkit-backdrop-filter: blur(30px) saturate(1.6);
+  border: 0.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 22px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  color: #2a2724;
+}
+.widget__head { flex: none; display: flex; align-items: center; gap: 7px; padding: 12px 16px 8px; font-size: 13px; }
+.widget__pin { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #e60023; color: #fff; }
+.widget__count { margin-left: auto; font-size: 12px; color: #8a847c; }
+.widget__scroll {
+  flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  padding: 2px 10px 12px;
+  scrollbar-width: thin; scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+.widget__cols { columns: 2; column-gap: 8px; }
+.pin { break-inside: avoid; margin: 0 0 8px; cursor: zoom-in; }
+.pin__media {
+  display: block; width: 100%; border-radius: 12px; overflow: hidden; object-fit: cover;
+  transition: transform .15s ease, filter .15s ease;
+}
+.pin:hover .pin__media { filter: brightness(0.92); transform: scale(0.985); }
+.pin__ph {
+  display: grid; place-items: center;
+  font: 500 11px/1 var(--mono); color: rgba(0, 0, 0, 0.35);
+  background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.22) 0 6px, transparent 6px 12px);
+}
+.pin__cap { display: block; padding: 4px 4px 0; font-size: 11.5px; font-weight: 500; color: #4a453f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* desktop icons */
 .icons { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
@@ -378,7 +416,7 @@ mark { background: var(--accent-soft); color: var(--accent); border-radius: 2px;
   }
   .win__bar, .term { border-radius: 0; }
   .rz { display: none; }
-  .dock, .greet, .icons { display: none; }
+  .dock, .greet, .icons, .widget { display: none; }
   .term { padding: 12px 16px 10px; font-size: 13px; }
   .welcome__photo { width: 52px; height: 52px; }
 }

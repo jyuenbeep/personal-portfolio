@@ -20,6 +20,18 @@
     <!-- typed-out greeting on the wallpaper (lines live in main.js: GREETINGS) -->
     <div class="greet" aria-hidden="true"><span class="greet__caret-l">❯</span> <span id="greet-text"></span><span class="greet__caret"></span></div>
 
+    <!-- art board widget — pinned to the desktop, windows float over it (pins live in main.js: ARTWORK) -->
+    <aside class="widget" id="art-widget" aria-label="Artwork">
+      <header class="widget__head">
+        <span class="widget__pin" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="13" height="13"><path fill="currentColor" d="M15 3l6 6-2.2.6-3.4 3.4.5 4.6-1.8 1.8-4.2-4.2L4 21l-1-1 5.8-5.9-4.2-4.2L6.4 8.1l4.6.5 3.4-3.4z"/></svg>
+        </span>
+        <b>art board</b>
+        <span class="widget__count" id="art-count"></span>
+      </header>
+      <div class="widget__scroll" id="art-grid"></div>
+    </aside>
+
     <!-- desktop icons (built in main.js: ICONS) -->
     <div class="icons" id="icons"></div>
 

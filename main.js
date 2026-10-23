@@ -19,6 +19,8 @@
   // Your default wallpaper. Swap the file (or this path) to change it for everyone.
   // Visitors can still set their own via right-click / dock / `wallpaper`.
   const WALLPAPER = "assets/wallpaper.jpg";
+  // width taken on the right by the art widget (300) + one column of icons (88) + gaps
+  const RIGHT_RAIL = 16 + 300 + 12 + 88;
   const STORE = { wall: "jy.wallpaper", win: "jy.window", hist: "jy.history", icons: "jy.icons" };
 
   const store = {
@@ -360,8 +362,10 @@ ${skills.join(" · ")}`;
   function defaultRect() {
     const b = bounds();
     const gap = 130; // leave the typed greeting visible above the window
-    const w = Math.min(860, b.w - 240), h = Math.max(MIN_H, Math.min(580, b.h - b.top - 90 - gap));
-    return { x: Math.round((b.w - w) / 2) - 40, y: Math.round(b.top + Math.max(gap, (b.h - b.top - 90 - h) / 2)), w, h };
+    const right = RIGHT_RAIL + 24; // keep the art widget + icon column in view
+    const w = Math.max(MIN_W, Math.min(860, b.w - right - 56)), h = Math.max(MIN_H, Math.min(580, b.h - b.top - 90 - gap));
+    const x = b.w - right - w >= 56 ? 56 + Math.round((b.w - right - 56 - w) / 2) : Math.round((b.w - w) / 2);
+    return { x, y: Math.round(b.top + Math.max(gap, (b.h - b.top - 90 - h) / 2)), w, h };
   }
 
   function initWindow() {
@@ -814,6 +818,14 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
   }
   const STOP = new Set("the and for are you your what where when how did does have has with that this was were who about can tell more any some from into out our its it's like just i'm i've".split(" "));
 
+  function lightbox(src) {
+    const lb = document.createElement("div");
+    lb.className = "lightbox";
+    lb.innerHTML = `<img src="${esc(src)}" alt="">`;
+    lb.addEventListener("click", () => lb.remove());
+    document.body.appendChild(lb);
+  }
+
   /* ---------- run a line ---------- */
   function tokenize(line) {
     const toks = []; let m; const re = /"([^"]*)"|'([^']*)'|(\S+)/g;
@@ -891,14 +903,7 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
     const t = e.target.closest("[data-cmd]");
     if (t) { if (!busy) run(t.dataset.cmd); input.focus(); return; }
     const im = e.target.closest(".t-img, .gallery img");
-    if (im) {
-      const lb = document.createElement("div");
-      lb.className = "lightbox";
-      lb.innerHTML = `<img src="${esc(im.getAttribute("src"))}" alt="">`;
-      lb.addEventListener("click", () => lb.remove());
-      document.body.appendChild(lb);
-      return;
-    }
+    if (im) return lightbox(im.getAttribute("src"));
     // focus the prompt on click, unless the user is selecting text or following a link
     if (!window.getSelection().toString() && !e.target.closest("a")) input.focus();
   });
@@ -958,6 +963,38 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
   ];
   const ICON_W = 88, ICON_H = 98;
 
+  // art board widget. Set `src` (e.g. "assets/art/07.jpg") to replace a placeholder;
+  // `h` is only the placeholder's height, real images keep their own aspect ratio.
+  const ARTWORK = [
+    { src: "", title: "untitled 01", h: 180, color: "#e8c9b5" },
+    { src: "", title: "untitled 02", h: 120, color: "#c9d6e3" },
+    { src: "", title: "untitled 03", h: 150, color: "#d8d2c4" },
+    { src: "", title: "untitled 04", h: 210, color: "#cfdccb" },
+    { src: "", title: "untitled 05", h: 130, color: "#e3cfd8" },
+    { src: "", title: "untitled 06", h: 170, color: "#d6cde6" },
+    { src: "", title: "untitled 07", h: 110, color: "#ecdcc0" },
+    { src: "", title: "untitled 08", h: 190, color: "#c4d9da" },
+    { src: "", title: "untitled 09", h: 140, color: "#e6d3c3" },
+    { src: "", title: "untitled 10", h: 160, color: "#d3d9c2" },
+  ];
+
+  function initArtWidget() {
+    const grid = $("art-grid");
+    $("art-count").textContent = ARTWORK.length + " pins";
+    grid.innerHTML = `<div class="widget__cols">` + ARTWORK.map((a, i) => `
+      <figure class="pin" data-i="${i}">
+        ${a.src
+          ? `<img class="pin__media" src="${esc(a.src)}" alt="${esc(a.title)}" loading="lazy" draggable="false">`
+          : `<span class="pin__media pin__ph" style="height:${a.h}px;background-color:${a.color}">${String(i + 1).padStart(2, "0")}</span>`}
+        <figcaption class="pin__cap">${esc(a.title)}</figcaption>
+      </figure>`).join("") + `</div>`;
+    grid.addEventListener("click", (e) => {
+      const pin = e.target.closest(".pin");
+      const a = pin && ARTWORK[pin.dataset.i];
+      if (a && a.src) lightbox(a.src);
+    });
+  }
+
   function openIcon(ic) {
     reopen();
     run(ic.cmd);
@@ -975,7 +1012,7 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
       box.querySelectorAll(".dicon").forEach((node, i) => {
         // saved positions are stored as distance from the right edge so they survive resizes
         const s = saved[node.dataset.id];
-        let rx = s ? s.rx : 16 + ICON_W * (Math.floor(i / rows) + 1);
+        let rx = s ? s.rx : RIGHT_RAIL - 88 + ICON_W * (Math.floor(i / rows) + 1);
         let y = s ? s.y : b.top + 14 + ICON_H * (i % rows);
         rx = Math.min(Math.max(rx, ICON_W), b.w);
         y = Math.min(Math.max(y, b.top), b.h - ICON_H);
@@ -1037,6 +1074,7 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
      ---------------------------------------------------------- */
   loadWallpaper();
   initIcons();
+  initArtWidget();
   greet();
   initWindow();
   updateCwd();
