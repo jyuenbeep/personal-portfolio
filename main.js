@@ -21,6 +21,8 @@
   const WALLPAPER = "assets/wallpaper.jpg";
   // width taken on the right by the art widget (300) + one column of icons (88) + gaps
   const RIGHT_RAIL = 16 + 300 + 12 + 88;
+  // width taken on the left by the staggered company icons
+  const LEFT_RAIL = 28 + 76 + 88 + 16;
   const STORE = { wall: "jy.wallpaper", win: "jy.window", hist: "jy.history", icons: "jy.icons" };
 
   const store = {
@@ -362,9 +364,10 @@ ${skills.join(" · ")}`;
   function defaultRect() {
     const b = bounds();
     const gap = 130; // leave the typed greeting visible above the window
-    const right = RIGHT_RAIL + 24; // keep the art widget + icon column in view
-    const w = Math.max(MIN_W, Math.min(860, b.w - right - 56)), h = Math.max(MIN_H, Math.min(580, b.h - b.top - 90 - gap));
-    const x = b.w - right - w >= 56 ? 56 + Math.round((b.w - right - 56 - w) / 2) : Math.round((b.w - w) / 2);
+    // sit between the company icons (left) and the art widget + icon column (right)
+    const left = LEFT_RAIL, right = RIGHT_RAIL + 24, room = b.w - left - right;
+    const w = Math.max(MIN_W, Math.min(860, room)), h = Math.max(MIN_H, Math.min(580, b.h - b.top - 90 - gap));
+    const x = room >= w ? left + Math.round((room - w) / 2) : Math.round((b.w - w) / 2);
     return { x, y: Math.round(b.top + Math.max(gap, (b.h - b.top - 90 - h) / 2)), w, h };
   }
 
@@ -960,6 +963,16 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
     { id: "play", label: "play", art: svgFolder, cmd: "cd ~/play && tree" },
     { id: "photo", label: "photo.jpg", art: `<img class="dicon__thumb" src="assets/jasmine.jpg" alt="" draggable="false">`, cmd: "open ~/photo.jpg" },
     { id: "contact", label: "contact.md", art: svgDoc("MD"), cmd: "contact" },
+    // companies, staggered down the left side
+    ...experience.map((e) => ({
+      id: "co-" + e.file.replace(".md", ""), side: "left", label: e.co,
+      art: `<span class="dicon__app"><img src="${e.logo}" alt="" draggable="false" onerror="this.replaceWith('${e.co.slice(0, 2)}')"></span>`,
+      cmd: "cat ~/experience/" + e.file,
+      after: () => {
+        resp(`Ask questions to learn more about my experience at <span class="c-acc">${esc(e.co)}</span>.`, "ai");
+        input.placeholder = `e.g. "what did you build at ${e.co}?"`;
+      },
+    })),
   ];
   const ICON_W = 88, ICON_H = 98;
 
@@ -998,6 +1011,7 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
   function openIcon(ic) {
     reopen();
     run(ic.cmd);
+    if (ic.after) ic.after();
   }
 
   function initIcons() {
@@ -1005,19 +1019,31 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
     let saved = {};
     try { saved = JSON.parse(store.get(STORE.icons)) || {}; } catch (e) {}
 
-    // default: a column down the right edge, wrapping leftward like Finder
+    // defaults: right icons in a column that wraps leftward like Finder;
+    // left (company) icons zig-zag down below the greeting
     const place = () => {
       const b = bounds();
       const rows = Math.max(1, Math.floor((b.h - b.top - 110) / ICON_H));
-      box.querySelectorAll(".dicon").forEach((node, i) => {
-        // saved positions are stored as distance from the right edge so they survive resizes
-        const s = saved[node.dataset.id];
-        let rx = s ? s.rx : RIGHT_RAIL - 88 + ICON_W * (Math.floor(i / rows) + 1);
-        let y = s ? s.y : b.top + 14 + ICON_H * (i % rows);
-        rx = Math.min(Math.max(rx, ICON_W), b.w);
-        y = Math.min(Math.max(y, b.top), b.h - ICON_H);
-        node.style.left = b.w - rx + "px";
-        node.style.top = y + "px";
+      const lefts = ICONS.filter((ic) => ic.side === "left").length;
+      const leftTop = b.top + 150;
+      const step = Math.max(70, Math.min(100, (b.h - leftTop - 100) / lefts));
+      let ri = 0, li = 0;
+      ICONS.forEach((ic) => {
+        const node = box.querySelector(`[data-id="${ic.id}"]`);
+        // saved positions are kept relative to the icon's own edge so they survive resizes
+        const s = saved[ic.id];
+        let x, y;
+        if (ic.side === "left") {
+          const i = li++;
+          x = s ? s.lx : 28 + (i % 2 ? 76 : 0);
+          y = s ? s.y : leftTop + step * i;
+        } else {
+          const i = ri++;
+          x = b.w - (s ? s.rx : RIGHT_RAIL - 88 + ICON_W * (Math.floor(i / rows) + 1));
+          y = s ? s.y : b.top + 14 + ICON_H * (i % rows);
+        }
+        node.style.left = Math.min(Math.max(x, 0), b.w - ICON_W) + "px";
+        node.style.top = Math.min(Math.max(y, b.top), b.h - ICON_H) + "px";
       });
     };
 
@@ -1050,7 +1076,9 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
           window.removeEventListener("pointerup", up);
           node.classList.remove("is-dragging");
           if (!moved) return openIcon(ic);
-          saved[ic.id] = { rx: window.innerWidth - node.offsetLeft, y: node.offsetTop };
+          saved[ic.id] = ic.side === "left"
+            ? { lx: node.offsetLeft, y: node.offsetTop }
+            : { rx: window.innerWidth - node.offsetLeft, y: node.offsetTop };
           store.set(STORE.icons, JSON.stringify(saved));
           place();
         };
