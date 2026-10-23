@@ -19,7 +19,8 @@
   --yellow: #d9c27f;
   --red: #e0786e;
 
-  --mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  /* SF Mono where the OS exposes it (Safari on macOS via ui-monospace); JetBrains Mono elsewhere */
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
   --sys: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
@@ -43,6 +44,47 @@ a { color: inherit; }
   background-size: cover;
   background-position: center;
   transition: opacity .4s ease;
+}
+
+/* typed greeting on the wallpaper */
+.greet {
+  position: absolute; z-index: 1; left: 56px; top: calc(var(--menubar-h) + 44px); right: 140px;
+  font: 500 clamp(24px, 3.4vw, 50px)/1.25 var(--mono);
+  color: rgba(255, 255, 255, 0.6);
+  text-shadow: 0 1px 14px rgba(0, 0, 0, 0.18);
+  white-space: pre-wrap; pointer-events: none;
+}
+.greet__caret-l { color: rgba(255, 255, 255, 0.4); }
+.greet__caret {
+  display: inline-block; width: 0.6em; height: 1.1em; margin-left: 2px;
+  vertical-align: -0.2em; background: rgba(255, 255, 255, 0.45);
+  animation: blink 1.05s steps(1) infinite;
+}
+.greet.is-typing .greet__caret { animation: none; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* desktop icons */
+.icons { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.dicon {
+  position: absolute; width: 88px; padding: 4px 2px 3px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  pointer-events: auto; cursor: default; touch-action: none;
+  border-radius: 6px;
+}
+.dicon__art { width: 58px; height: 58px; display: grid; place-items: center; border-radius: 6px; }
+.dicon__label {
+  max-width: 100%; padding: 1px 5px; border-radius: 4px;
+  font-size: 12px; font-weight: 500; line-height: 1.25; text-align: center; color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75), 0 0 6px rgba(0, 0, 0, 0.35);
+  overflow-wrap: anywhere;
+}
+.dicon:hover .dicon__art, .dicon.is-selected .dicon__art { background: rgba(0, 0, 0, 0.2); }
+.dicon.is-selected .dicon__label { background: #2f6fe0; text-shadow: none; }
+.dicon.is-dragging { opacity: 0.8; z-index: 3; }
+.dicon__art svg { filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3)); }
+.dicon__thumb {
+  width: 50px; height: 50px; object-fit: cover; border: 3px solid #fff; border-radius: 2px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
 /* ============================================================
@@ -336,11 +378,12 @@ mark { background: var(--accent-soft); color: var(--accent); border-radius: 2px;
   }
   .win__bar, .term { border-radius: 0; }
   .rz { display: none; }
-  .dock { display: none; }
+  .dock, .greet, .icons { display: none; }
   .term { padding: 12px 16px 10px; font-size: 13px; }
   .welcome__photo { width: 52px; height: 52px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .win, .win.is-animating, .dock__app { transition: none; }
+  .greet__caret { animation: none; }
 }

@@ -7,7 +7,8 @@
    3. WALLPAPER
    4. WINDOW (drag, resize, traffic lights)
    5. TERMINAL (output, markdown, commands, ask)
-   6. BOOT
+   6. DESKTOP (greeting, icons)
+   7. BOOT
    ============================================================ */
 (function () {
   "use strict";
@@ -18,7 +19,7 @@
   // Your default wallpaper. Swap the file (or this path) to change it for everyone.
   // Visitors can still set their own via right-click / dock / `wallpaper`.
   const WALLPAPER = "assets/wallpaper.jpg";
-  const STORE = { wall: "jy.wallpaper", win: "jy.window", hist: "jy.history" };
+  const STORE = { wall: "jy.wallpaper", win: "jy.window", hist: "jy.history", icons: "jy.icons" };
 
   const store = {
     get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -358,8 +359,9 @@ ${skills.join(" · ")}`;
 
   function defaultRect() {
     const b = bounds();
-    const w = Math.min(860, b.w - 80), h = Math.min(580, b.h - b.top - 130);
-    return { x: Math.round((b.w - w) / 2), y: Math.round(b.top + (b.h - b.top - 90 - h) / 2), w, h };
+    const gap = 130; // leave the typed greeting visible above the window
+    const w = Math.min(860, b.w - 240), h = Math.max(MIN_H, Math.min(580, b.h - b.top - 90 - gap));
+    return { x: Math.round((b.w - w) / 2) - 40, y: Math.round(b.top + Math.max(gap, (b.h - b.top - 90 - h) / 2)), w, h };
   }
 
   function initWindow() {
@@ -902,9 +904,140 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
   });
 
   /* ----------------------------------------------------------
-     6. BOOT
+     6. DESKTOP — typed greeting + clickable icons
+     ---------------------------------------------------------- */
+  const GREETINGS = [
+    "welcome, i'm jasmine.",
+    "cs @ georgia tech '28",
+    "incoming swe @ servicenow",
+    "security · systems · ui",
+    "i build keyboards, too.",
+  ];
+
+  function greet() {
+    const el = $("greet-text"), wrap = el.parentElement;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = GREETINGS[0]; return; }
+    let i = 0;
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    (async function loop() {
+      for (;;) {
+        const line = GREETINGS[i++ % GREETINGS.length];
+        wrap.classList.add("is-typing");
+        for (let n = 1; n <= line.length; n++) { el.textContent = line.slice(0, n); await wait(55 + Math.random() * 45); }
+        wrap.classList.remove("is-typing");
+        await wait(1800);
+        wrap.classList.add("is-typing");
+        for (let n = line.length - 1; n >= 0; n--) { el.textContent = line.slice(0, n); await wait(18); }
+        wrap.classList.remove("is-typing");
+        await wait(450);
+      }
+    })();
+  }
+
+  const svgDoc = (label) => `<svg viewBox="0 0 48 58" width="44" height="54" aria-hidden="true">
+    <path d="M4 2h28l12 12v40a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="#fbfaf7"/>
+    <path d="M32 2v10a2 2 0 0 0 2 2h10z" fill="#d9d6cf"/>
+    <g fill="#c7c3ba"><rect x="9" y="22" width="26" height="2.4" rx="1"/><rect x="9" y="28" width="30" height="2.4" rx="1"/><rect x="9" y="34" width="22" height="2.4" rx="1"/></g>
+    <text x="24" y="50" text-anchor="middle" font-family="-apple-system, Helvetica, sans-serif" font-size="8.5" font-weight="700" fill="#d97757">${label}</text>
+  </svg>`;
+  const svgFolder = `<svg viewBox="0 0 64 50" width="58" height="46" aria-hidden="true">
+    <path d="M2 7a4 4 0 0 1 4-4h17l5 5h30a4 4 0 0 1 4 4v3H2z" fill="#5aa8e8"/>
+    <path d="M2 13h60v31a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4z" fill="#7cc0f5"/>
+    <path d="M2 13h60v2H2z" fill="#a9d6fa"/>
+  </svg>`;
+
+  // each icon runs a terminal command when opened
+  const ICONS = [
+    { id: "resume", label: "resume.md", art: svgDoc("MD"), cmd: "cat ~/resume.md" },
+    { id: "about", label: "about.md", art: svgDoc("MD"), cmd: "cat ~/about.md" },
+    { id: "experience", label: "experience", art: svgFolder, cmd: "cd ~/experience && ls" },
+    { id: "projects", label: "projects", art: svgFolder, cmd: "cd ~/projects && ls" },
+    { id: "play", label: "play", art: svgFolder, cmd: "cd ~/play && tree" },
+    { id: "photo", label: "photo.jpg", art: `<img class="dicon__thumb" src="assets/jasmine.jpg" alt="" draggable="false">`, cmd: "open ~/photo.jpg" },
+    { id: "contact", label: "contact.md", art: svgDoc("MD"), cmd: "contact" },
+  ];
+  const ICON_W = 88, ICON_H = 98;
+
+  function openIcon(ic) {
+    reopen();
+    run(ic.cmd);
+  }
+
+  function initIcons() {
+    const box = $("icons");
+    let saved = {};
+    try { saved = JSON.parse(store.get(STORE.icons)) || {}; } catch (e) {}
+
+    // default: a column down the right edge, wrapping leftward like Finder
+    const place = () => {
+      const b = bounds();
+      const rows = Math.max(1, Math.floor((b.h - b.top - 110) / ICON_H));
+      box.querySelectorAll(".dicon").forEach((node, i) => {
+        // saved positions are stored as distance from the right edge so they survive resizes
+        const s = saved[node.dataset.id];
+        let rx = s ? s.rx : 16 + ICON_W * (Math.floor(i / rows) + 1);
+        let y = s ? s.y : b.top + 14 + ICON_H * (i % rows);
+        rx = Math.min(Math.max(rx, ICON_W), b.w);
+        y = Math.min(Math.max(y, b.top), b.h - ICON_H);
+        node.style.left = b.w - rx + "px";
+        node.style.top = y + "px";
+      });
+    };
+
+    ICONS.forEach((ic) => {
+      const node = document.createElement("button");
+      node.type = "button";
+      node.className = "dicon";
+      node.dataset.id = ic.id;
+      node.setAttribute("aria-label", "Open " + ic.label);
+      node.innerHTML = `<span class="dicon__art">${ic.art}</span><span class="dicon__label">${esc(ic.label)}</span>`;
+
+      // click opens; drag moves it around the desktop
+      node.addEventListener("pointerdown", (e) => {
+        if (e.button !== 0) return;
+        e.preventDefault();
+        box.querySelectorAll(".is-selected").forEach((n) => n.classList.remove("is-selected"));
+        node.classList.add("is-selected");
+        const sx = e.clientX, sy = e.clientY, ox = node.offsetLeft, oy = node.offsetTop;
+        let moved = false;
+        const move = (ev) => {
+          const dx = ev.clientX - sx, dy = ev.clientY - sy;
+          if (!moved && Math.hypot(dx, dy) < 5) return;
+          moved = true;
+          node.classList.add("is-dragging");
+          node.style.left = ox + dx + "px";
+          node.style.top = oy + dy + "px";
+        };
+        const up = () => {
+          window.removeEventListener("pointermove", move);
+          window.removeEventListener("pointerup", up);
+          node.classList.remove("is-dragging");
+          if (!moved) return openIcon(ic);
+          saved[ic.id] = { rx: window.innerWidth - node.offsetLeft, y: node.offsetTop };
+          store.set(STORE.icons, JSON.stringify(saved));
+          place();
+        };
+        window.addEventListener("pointermove", move);
+        window.addEventListener("pointerup", up);
+      });
+      node.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openIcon(ic); } });
+      box.appendChild(node);
+    });
+
+    place();
+    window.addEventListener("resize", place);
+    // clicking empty desktop clears the selection
+    $("desktop").addEventListener("pointerdown", (e) => {
+      if (!e.target.closest(".dicon")) box.querySelectorAll(".is-selected").forEach((n) => n.classList.remove("is-selected"));
+    });
+  }
+
+  /* ----------------------------------------------------------
+     7. BOOT
      ---------------------------------------------------------- */
   loadWallpaper();
+  initIcons();
+  greet();
   initWindow();
   updateCwd();
   welcome();
