@@ -122,10 +122,14 @@ a { color: inherit; }
 .dicon__art svg { filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3)); }
 .dicon__app {
   display: grid; place-items: center; width: 54px; height: 54px; border-radius: 13px;
-  background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3), inset 0 0 0 0.5px rgba(0, 0, 0, 0.08);
-  font: 700 18px/1 var(--sys); color: #2a2724; text-transform: uppercase;
+  /* see-through glass tile so the wallpaper shows behind the logo */
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(10px) saturate(1.4);
+  -webkit-backdrop-filter: blur(10px) saturate(1.4);
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.35), 0 2px 8px rgba(0, 0, 0, 0.12);
+  font: 700 18px/1 var(--sys); color: #fff; text-transform: uppercase;
 }
-.dicon__app img { width: 38px; height: 38px; object-fit: contain; }
+.dicon__app img { width: 38px; height: 38px; object-fit: contain; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35)); }
 .dicon__thumb {
   width: 50px; height: 50px; object-fit: cover; border: 3px solid #fff; border-radius: 2px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);

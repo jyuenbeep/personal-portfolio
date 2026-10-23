@@ -642,6 +642,7 @@ ${skills.join(" · ")}`;
         if (n.type === "img") return showImages([n.src]);
         if (n.type === "link") return ok(`<a class="c-link" href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.url)}</a>`);
         ok(renderMd(n.content));
+        if (p[0] === "experience") focus = experience.find((e) => e.file === p[p.length - 1].toLowerCase()) || focus;
       });
     },
 
@@ -704,7 +705,7 @@ ${skills.join(" · ")}`;
     contact() { COMMANDS.cat(["~/contact.md"]); },
     whoami() { ok(`jasmine yuen <span class="c-dim">— software engineer · cs @ georgia tech '28 · atlanta, ga</span>`); },
     echo(args) { ok(esc(args.join(" "))); },
-    clear() { out.innerHTML = ""; },
+    clear() { out.innerHTML = ""; focus = null; },
     history() { ok(history.map((h, i) => `<span class="c-dim">${String(i + 1).padStart(4)}</span>  <span class="cmd-link" data-cmd="${esc(h)}">${esc(h)}</span>`).join("\n") || "<span class='c-dim'>(empty)</span>"); },
 
     wallpaper(args) {
@@ -767,6 +768,11 @@ ${skills.join(" · ")}`;
   function ask(q) {
     const lq = " " + q.toLowerCase() + " ";
     const topic = TOPICS.find((t) => t.keys.some((k) => lq.includes(k)));
+    // naming a company focuses the conversation on it; broad questions ("what project?")
+    // then stay about that company instead of jumping to the general list
+    const co = topic && topic.path && experience.find((e) => "experience/" + e.file === topic.path);
+    if (co) focus = co;
+    const aboutFocus = co || (focus && (!topic || isGeneric(topic, lq)));
     busy = true; promptEl.classList.add("is-busy");
     const id = "spin" + Date.now();
     const verb = VERBS[Math.floor(Math.random() * VERBS.length)];
@@ -778,7 +784,7 @@ ${skills.join(" · ")}`;
     setTimeout(() => {
       clearInterval(iv); el.remove();
       busy = false; promptEl.classList.remove("is-busy");
-      answer(q, topic);
+      if (aboutFocus) answerCompany(q, focus); else answer(q, topic);
       input.focus();
     }, 650 + Math.random() * 500);
   }
@@ -819,6 +825,34 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
     print(`<div class="blk">${renderMd(nodeAt(p).content)}</div>`);
     if (topic.then) run(topic.then, true);
   }
+  let focus = null; // the company the conversation is currently about
+  // plural / "personal" / "side" project questions mean my own projects, not the focused company
+  const isGeneric = (t, lq) => (t.dir === "projects" ? !/projects|personal|side/.test(lq) : !!t.dir)
+    || t.path === "about.md" || t.path === "skills.md";
+
+  function answerCompany(q, e) {
+    const lq = q.toLowerCase();
+    const sub = (html) => `<span class="sub">${html}</span>`;
+    let html;
+    if (/favou?rite|learn|challeng|hard|team|culture|enjoy|like/.test(lq)) {
+      html = `That's not in my notes for <span class="c-acc">${esc(e.co)}</span> yet. I'd love to tell you in person, so ${`<span class="cmd-link" data-cmd="contact">reach out</span>`}!`;
+    } else if (/when|how long|date|year|month|duration|start|end/.test(lq)) {
+      html = `I was at <span class="c-acc">${esc(e.co)}</span> as a ${esc(e.role)}: ${esc(e.date)}.`;
+    } else if (/role|title|position/.test(lq)) {
+      html = `At <span class="c-acc">${esc(e.co)}</span> I was a <span class="c-b">${esc(e.role)}</span> <span class="c-dim">(${esc(e.date)})</span>.`;
+    } else if (/tech|stack|language|tool|framework|use|skill/.test(lq)) {
+      html = `At <span class="c-acc">${esc(e.co)}</span> I worked with:` + sub(e.tags.map((t) => `<span class="c-acc">${esc(t)}</span>`).join("  "));
+    } else if (/impact|result|sav|achiev|metric|number|outcome|accomplish/.test(lq)) {
+      const wins = e.points.filter((p) => /\d/.test(p));
+      html = `The impact at <span class="c-acc">${esc(e.co)}</span>:` + (wins.length ? wins : e.points).map((p) => sub(esc(p))).join("");
+    } else {
+      html = `Here's what I worked on at <span class="c-acc">${esc(e.co)}</span> as a ${esc(e.role)}:` + e.points.map((p) => sub(esc(p))).join("");
+    }
+    const follow = ["what tech did you use?", "what was the impact?", "how long were you there?"]
+      .map((x) => `<span class="chip" data-cmd="${x}">${x}</span>`).join("");
+    resp(html + sub(`<span class="c-dim">more about ${esc(e.co)}:</span> ${follow}`), "ai");
+  }
+
   const STOP = new Set("the and for are you your what where when how did does have has with that this was were who about can tell more any some from into out our its it's like just i'm i've".split(" "));
 
   function lightbox(src) {
