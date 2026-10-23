@@ -1,2 +1,14 @@
 # personal-portfolio
-my personal portfolio website
+
+My personal site: a macOS-style desktop with a single Claude-style terminal you can `ls`, `cd`, `cat` and ask questions in.
+
+## Run locally
+
+    python3 devserver.py   # http://localhost:5173
+
+## Editing
+
+- **Content** lives in `main.js` under `2. CONTENT`: `experience`, `projects`, `skills`, the `md` blocks, and the `FS` tree (the filesystem visitors browse).
+- **Default wallpaper**: replace `assets/wallpaper.jpg`, or point `WALLPAPER` at the top of `main.js` somewhere else.
+- **Visitors' wallpaper**: anyone can set their own (right-click the desktop, the Photos icon in the dock, drag a photo onto the page, or run `wallpaper`). It's saved in their browser only.
+- **Answers to questions**: `TOPICS` in `main.js` maps keywords to files; anything unmatched falls back to full-text search.
