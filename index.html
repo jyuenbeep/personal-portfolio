@@ -78,7 +78,7 @@
       <div class="term" id="term">
         <div class="term__out" id="out" aria-live="polite"></div>
         <div class="prompt" id="prompt">
-          <span class="prompt__caret">&gt;</span>
+          <span class="prompt__caret" id="prompt-caret">&gt;</span>
           <input class="prompt__input" id="input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Terminal input" placeholder='Try "ls", "cat about.md", or ask "where have you interned?"' />
         </div>
         <div class="term__hint" id="hint"><span>? for shortcuts</span><span id="hint-cwd">~</span></div>
@@ -122,6 +122,7 @@
     <input type="file" id="wall-file" accept="image/*" hidden />
   </div>
 
+  <script src="animations.js?v=1"></script>
   <script src="main.js?v=1"></script>
 </body>
 </html>

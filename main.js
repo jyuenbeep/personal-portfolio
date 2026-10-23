@@ -138,6 +138,15 @@ Concentrations in **Cybersecurity** and **System Architecture**.
 - music
 - reading — fiction, essays, and the occasional systems paper`,
 
+    secret: `# shh
+you found it.
+
+this window is running **claude**, but there's a plain old shell underneath with a few toys in it.
+
+- type \`exit\` to leave claude
+- then try \`help\` to see what's in there
+- \`claude\` brings you back`,
+
     keyboards: `# mechanical keyboards
 Every board here I put together by hand — sourcing the case and plate, lubing and filming switches, tuning stabilizers, and picking keycaps until the sound and feel are exactly right.
 
@@ -218,6 +227,7 @@ ${skills.join(" · ")}`;
       "more.md": file(md.more),
     }),
     "photo.jpg": img("assets/jasmine.jpg"),
+    "secret.md": file(md.secret),
     "links": dir({
       "github": link("https://github.com/jyuenbeep"),
       "linkedin": link("https://www.linkedin.com/in/jasmineyiyuen/"),
@@ -436,6 +446,7 @@ ${skills.join(" · ")}`;
 
   const dockDot = document.querySelector("#dock-term .dock__dot");
   function closeWin() {
+    stopAnim();
     win.classList.add("is-hidden");
     dockDot.hidden = true;
   }
@@ -444,7 +455,7 @@ ${skills.join(" · ")}`;
     const wasClosed = win.classList.contains("is-hidden");
     win.classList.remove("is-hidden", "is-min");
     dockDot.hidden = false;
-    if (wasClosed) { out.innerHTML = ""; cwd = []; updateCwd(); welcome(); }
+    if (wasClosed) { setMode("claude"); out.innerHTML = ""; cwd = []; updateCwd(); welcome(); }
     setTimeout(() => input.focus(), 50);
   }
 
@@ -512,8 +523,10 @@ ${skills.join(" · ")}`;
   }
 
   function updateCwd() {
-    $("win-title").textContent = `jasmine — claude — ${fmtPath(cwd)}`;
-    $("hint-cwd").textContent = fmtPath(cwd);
+    const where = fmtPath(cwd);
+    $("win-title").textContent = mode === "shell" ? `jasmine — -zsh — ${where}` : `jasmine — claude — ${where}`;
+    $("hint-cwd").textContent = where;
+    $("prompt-caret").textContent = mode === "shell" ? shellPS() : ">";
   }
 
   /* tiny markdown → html (headings, lists, bold, code, links, em) */
@@ -714,7 +727,7 @@ ${skills.join(" · ")}`;
       pickWallpaper();
     },
 
-    exit() { closeWin(); },
+    exit() { enterShell(); },
     sudo() { err("jasmine is not in the sudoers file. This incident will be reported."); },
     rm() { err("rm: permission denied (nice try)"); },
     vim() { err("you'd never get out. try `cat` instead"); },
@@ -872,6 +885,7 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
 
   function run(line, silent) {
     line = line.trim();
+    if (mode === "shell") return runShell(line);
     if (!line) return;
     if (!silent) {
       print(`<div class="blk blk--cmd"><b>${esc(line)}</b></div>`);
@@ -899,7 +913,8 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
     const v = input.value;
     const toks = v.split(/\s+/);
     if (toks.length <= 1) {
-      const opts = Object.keys(COMMANDS).filter((c) => c.startsWith(toks[0].toLowerCase()));
+      const names = mode === "shell" ? Object.keys(SHELL).concat(Object.keys(ANIMS)) : Object.keys(COMMANDS);
+      const opts = names.filter((c) => c.startsWith(toks[0].toLowerCase()));
       if (opts.length === 1) input.value = opts[0] + " ";
       else if (opts.length > 1) ok(`<span class="c-dim">${opts.join("  ")}</span>`);
       return;
@@ -926,8 +941,10 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
   }
 
   input.addEventListener("keydown", (e) => {
+    if (anim) { e.preventDefault(); stopAnim(true); return; }
     if (busy) { e.preventDefault(); return; }
     if (e.key === "Enter") { const v = input.value; input.value = ""; run(v); }
+    else if (e.key === "c" && e.ctrlKey && mode === "shell") { e.preventDefault(); shellEcho(input.value + "^C"); input.value = ""; }
     else if (e.key === "Tab") { e.preventDefault(); complete(); }
     else if (e.key === "ArrowUp") { e.preventDefault(); if (hIdx > 0) input.value = history[--hIdx]; }
     else if (e.key === "ArrowDown") { e.preventDefault(); hIdx = Math.min(history.length, hIdx + 1); input.value = history[hIdx] || ""; }
@@ -944,6 +961,133 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
     // focus the prompt on click, unless the user is selecting text or following a link
     if (!window.getSelection().toString() && !e.target.closest("a")) input.focus();
   });
+
+  /* ----------------------------------------------------------
+     5b. MAIN TERMINAL — the plain shell under claude (`exit`)
+         with ASCII toys from animations.js
+     ---------------------------------------------------------- */
+  let mode = "claude"; // "claude" | "shell"
+  let anim = null;
+  let claudeStarted = Date.now();
+  const ANIMS = window.ANIMATIONS || {};
+
+  const shellPS = () => `jasmine@macbook ${cwd.length ? cwd[cwd.length - 1] : "~"} %`;
+  const shellEcho = (line) => print(`<div class="sh-line"><span class="sh-ps">${esc(shellPS())}</span> ${esc(line)}</div>`);
+  const shellOut = (html) => print(`<div class="sh-out">${html}</div>`);
+
+  function setMode(m) {
+    stopAnim();
+    mode = m;
+    term.classList.toggle("is-shell", m === "shell");
+    input.placeholder = m === "shell" ? "" : 'Try "ls", "cat about.md", or ask "where have you interned?"';
+    updateCwd();
+  }
+
+  function enterShell() {
+    const secs = Math.round((Date.now() - claudeStarted) / 1000);
+    const dur = secs >= 60 ? `${Math.floor(secs / 60)}m ${secs % 60}s` : `${secs}s`;
+    print(`<div class="blk c-dim">Total cost:            $0.00 (it's a static site)
+Total duration (wall): ${dur}
+Total code changes:    0 lines added, 0 lines removed</div>`);
+    setMode("shell");
+    const d = new Date();
+    shellOut(`<span class="c-dim">Last login: ${d.toDateString().slice(0, 10)} ${d.toTimeString().slice(0, 8)} on ttys001</span>
+type <span class="c-acc">help</span> to see what's in here.`);
+  }
+
+  function enterClaude(quiet) {
+    setMode("claude");
+    claudeStarted = Date.now();
+    if (quiet) return;
+    welcome();
+  }
+
+  // monospace cell size for the animation font, used to size animations to the window
+  function termSize() {
+    const probe = document.createElement("pre");
+    probe.className = "anim";
+    probe.style.cssText = "position:absolute;visibility:hidden";
+    probe.textContent = "x".repeat(50);
+    term.appendChild(probe);
+    const cw = probe.getBoundingClientRect().width / 50, ch = probe.getBoundingClientRect().height;
+    probe.remove();
+    return {
+      cols: Math.max(30, Math.min(110, Math.floor((term.clientWidth - 34) / cw))),
+      rows: Math.max(10, Math.min(26, Math.floor((term.clientHeight - 60) / ch))),
+    };
+  }
+
+  function playAnim(name, args) {
+    const A = ANIMS[name];
+    const { cols, rows } = termSize();
+    if (A.static) return shellOut(`<pre class="anim">${A.static(args, cols)}</pre>`);
+    const pre = document.createElement("pre");
+    pre.className = "anim";
+    out.appendChild(pre);
+    print(`<div class="sh-out c-dim anim-hint">press any key to stop</div>`);
+    const hint = out.lastElementChild;
+    const state = A.init(cols, rows, args);
+    const t0 = performance.now();
+    let n = 0;
+    promptEl.classList.add("is-running");
+    const tick = () => {
+      const t = (performance.now() - t0) / 1000;
+      const html = A.frame(state, n++, t);
+      if (html === null || (A.duration && t > A.duration)) return stopAnim();
+      pre.innerHTML = html;
+      term.scrollTop = term.scrollHeight;
+    };
+    anim = { iv: setInterval(tick, 1000 / (A.fps || 20)), hint };
+    tick();
+  }
+
+  function stopAnim(interrupted) {
+    if (!anim) return;
+    clearInterval(anim.iv);
+    anim.hint.textContent = interrupted ? "^C" : "";
+    anim = null;
+    promptEl.classList.remove("is-running");
+    input.focus();
+  }
+
+  // plain-shell commands; the toys come from ANIMATIONS
+  const SHELL = {
+    help() {
+      const toys = Object.keys(ANIMS).filter((k) => !ANIMS[k].static);
+      const fun = Object.keys(ANIMS).filter((k) => ANIMS[k].static);
+      shellOut(`<span class="c-b">animations</span>  ${toys.map((k) => `<span class="cmd-link c-acc" data-cmd="${k}">${k}</span>`).join("  ")}
+<span class="c-b">fun</span>         ${fun.map((k) => `<span class="cmd-link c-acc" data-cmd="${k}">${k}</span>`).join("  ")}  <span class="c-dim">(cowsay &lt;text&gt;, keyboard &lt;text&gt;)</span>
+<span class="c-b">files</span>       ls  cd  cat  tree  pwd  open
+<span class="c-b">other</span>       clear  whoami  date  echo  history
+            <span class="cmd-link c-acc" data-cmd="claude">claude</span> <span class="c-dim">— back to claude</span>   <span class="c-acc">exit</span> <span class="c-dim">— close the window</span>
+<span class="c-dim">press any key to stop an animation</span>`);
+    },
+    claude() { enterClaude(false); },
+    exit() {
+      shellOut(`<span class="c-dim">[Process completed]</span>`);
+      setTimeout(closeWin, 700);
+    },
+    date() { shellOut(esc(new Date().toString().replace(/ GMT.*/, ""))); },
+    whoami() { shellOut("jasmine"); },
+    echo(a) { shellOut(esc(a.join(" "))); },
+    clear() { out.innerHTML = ""; },
+    sudo() { shellOut("jasmine is not in the sudoers file. This incident will be reported."); },
+  };
+  // reuse claude's file commands; they print fine in either mode
+  ["ls", "ll", "cd", "cat", "tree", "pwd", "open", "history", "find", "grep"].forEach((k) => { SHELL[k] = COMMANDS[k]; });
+
+  function runShell(line) {
+    stopAnim(true); // e.g. clicking a link while something is playing
+    shellEcho(line);
+    if (!line) return;
+    if (history[history.length - 1] !== line) history.push(line);
+    hIdx = history.length;
+    const toks = tokenize(line);
+    const cmd = (toks[0] || "").toLowerCase(), args = toks.slice(1);
+    if (ANIMS[cmd]) return playAnim(cmd, args);
+    if (SHELL[cmd]) return SHELL[cmd](args);
+    shellOut(`zsh: command not found: ${esc(toks[0])}  <span class="c-dim">(try <span class="cmd-link" data-cmd="help">help</span>)</span>`);
+  }
 
   /* ----------------------------------------------------------
      6. DESKTOP — typed greeting + clickable icons
@@ -1044,6 +1188,7 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
 
   function openIcon(ic) {
     reopen();
+    if (mode === "shell") enterClaude(true);
     run(ic.cmd);
     if (ic.after) ic.after();
   }

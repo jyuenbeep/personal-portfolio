@@ -245,6 +245,7 @@ body.is-dragging, body.is-dragging * { user-select: none !important; }
   display: flex; flex-direction: column;
   padding: 14px 16px 10px;
   font-family: var(--mono); font-size: 13.5px; line-height: 1.55;
+  font-variant-ligatures: none; /* keep |- and -> as real characters for ASCII art */
   color: var(--fg);
   overflow-y: auto;
   border-radius: 0 0 11px 11px;
@@ -353,6 +354,37 @@ mark { background: var(--accent-soft); color: var(--accent); border-radius: 2px;
 .prompt__input::placeholder { color: var(--faint); }
 .prompt.is-busy { opacity: .55; }
 .term__hint { flex: none; display: flex; justify-content: space-between; gap: 12px; padding: 4px 4px 0; color: var(--faint); font-size: 12px; }
+
+/* ============================================================
+   Main terminal (shell mode, after `exit`)
+   ============================================================ */
+.term.is-shell .prompt { border: 0; border-radius: 0; padding: 0; margin: 0 0 6px; gap: 0.6ch; }
+.term.is-shell .prompt__caret { color: var(--fg); white-space: nowrap; }
+.term.is-shell .term__hint { display: none; }
+.prompt.is-running { visibility: hidden; }
+.sh-line, .sh-out { margin: 0 0 2px; white-space: pre-wrap; word-break: break-word; }
+.sh-out { margin-bottom: 8px; }
+.sh-ps { color: var(--fg); }
+
+.anim {
+  margin: 4px 0 0; font: 12px/1.15 var(--mono); color: var(--fg);
+  white-space: pre; overflow: hidden;
+}
+.anim-hint:empty { display: none; }
+.a-acc { color: var(--accent); }
+.a-dim { color: var(--dim); }
+.a-blue { color: var(--blue); }
+.a-pink { color: #e9a3c9; }
+.a-mh { color: #e6ffe9; }
+.a-m1 { color: #7ee787; }
+.a-m2 { color: #2ea043; }
+.a-m3 { color: #1a5f2a; }
+.a-f1 { color: #7a2a12; }
+.a-f2 { color: #c2410c; }
+.a-f3 { color: #f59e0b; }
+.a-f4 { color: #fde68a; }
+.a-key-on { background: var(--accent); color: #1a1918; }
+.a-caret { background: var(--fg); }
 
 /* ============================================================
    Dock
