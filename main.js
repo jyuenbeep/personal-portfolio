@@ -90,7 +90,7 @@
   ];
 
   const skills = ["Java", "Python", "TypeScript", "React", "Kotlin", "SQL", "Flask", "Node.js", "HTML/CSS",
-    "Git", "REST APIs", "GCP", "RHDH", "JUnit", "Blender", "C"];
+    "Git", "REST APIs", "GCP", "RHDH", "JUnit", "Blender", "C", "Docker", "Ubuntu", "Linux"];
 
   const md = {
     about: `# about
@@ -404,7 +404,11 @@ ${skills.join(" · ")}`;
 
   /* menus + dock actions */
   const appleMenu = $("apple-menu"), appleBtn = $("apple-btn"), ctxMenu = $("ctx-menu");
-  const hideMenus = () => { appleMenu.hidden = true; ctxMenu.hidden = true; appleBtn.setAttribute("aria-expanded", "false"); };
+  const stackPop = $("stack"), stackBtn = $("dock-stack");
+  const hideMenus = () => {
+    appleMenu.hidden = true; ctxMenu.hidden = true; stackPop.hidden = true;
+    appleBtn.setAttribute("aria-expanded", "false"); stackBtn.setAttribute("aria-expanded", "false");
+  };
 
   appleBtn.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -1068,6 +1072,43 @@ type <span class="c-acc">help</span> to see what's in here.`);
     <path d="M2 13h60v2H2z" fill="#a9d6fa"/>
   </svg>`;
 
+  // tech stack in the dock. Each entry is [label, logo file in assets/stack/].
+  const STACK = {
+    languages: [["Java", "java"], ["Python", "python"], ["TypeScript", "typescript"], ["Kotlin", "kotlin"],
+      ["C", "c"], ["SQL", "postgresql"], ["HTML/CSS", "html5"]],
+    tools: [["React", "react"], ["Node.js", "nodejs"], ["Flask", "flask"], ["Docker", "docker"], ["Git", "git"],
+      ["GCP", "googlecloud"], ["Ubuntu", "ubuntu"], ["Linux", "linux"], ["Blender", "blender"], ["JUnit", "junit"]],
+  };
+  const STACK_PILE = ["python", "typescript", "ubuntu"]; // logos fanned on the dock icon
+
+  function initStack() {
+    const logo = (f) => `<img src="assets/stack/${f}.svg" alt="" draggable="false">`;
+    $("stack-pile").innerHTML = STACK_PILE.map(logo).join("");
+    stackPop.innerHTML = Object.entries(STACK).map(([group, items]) =>
+      `<div class="stack__head">${group}</div><div class="stack__grid">${items.map(([name, f]) =>
+        `<div class="stack__item" title="${esc(name)}">${logo(f)}<span>${esc(name)}</span></div>`).join("")}</div>`
+    ).join("") + `<button class="stack__more" type="button">cat ~/skills.md</button>`;
+
+    // keep clicks inside from reaching the window listener that closes menus
+    stackPop.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (e.target.closest(".stack__more")) { hideMenus(); openIcon({ cmd: "cat ~/skills.md" }); }
+    });
+    stackBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const open = stackPop.hidden;
+      hideMenus();
+      if (!open) return;
+      stackPop.hidden = false;
+      stackBtn.setAttribute("aria-expanded", "true");
+      // float it above the dock icon, kept on screen
+      const b = stackBtn.getBoundingClientRect(), w = stackPop.offsetWidth;
+      stackPop.style.left = Math.max(8, Math.min(b.left + b.width / 2 - w / 2, window.innerWidth - w - 8)) + "px";
+      stackPop.style.bottom = (window.innerHeight - b.top + 12) + "px";
+      stackPop.style.setProperty("--arrow-x", (b.left + b.width / 2 - parseFloat(stackPop.style.left)) + "px");
+    });
+  }
+
   // each icon runs a terminal command when opened
   const ICONS = [
     { id: "resume", label: "resume.md", art: svgDoc("MD"), cmd: "cat ~/resume.md" },
@@ -1221,6 +1262,7 @@ type <span class="c-acc">help</span> to see what's in here.`);
   loadWallpaper();
   initIcons();
   initArtWidget();
+  initStack();
   greet();
   initWindow();
   updateCwd();

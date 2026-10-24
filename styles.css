@@ -424,9 +424,53 @@ mark { background: var(--accent-soft); color: var(--accent); border-radius: 2px;
   opacity: 0; pointer-events: none; transition: opacity .12s;
 }
 .dock__app:hover::before { opacity: 1; }
+.dock__app[aria-expanded="true"]::before { opacity: 0; }
 .dock__sep { width: 1px; align-self: stretch; margin: 6px 3px; background: rgba(255,255,255,.35); }
 .dock__dot { position: absolute; bottom: -4px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: rgba(255,255,255,.85); }
 .dock__dot[hidden] { display: none; }
+
+/* tech stack: dock icon is a little fanned pile of logos */
+.ic--stack { position: relative; background: linear-gradient(#45454a, #232326); }
+.ic--stack img {
+  position: absolute; top: 14px; width: 24px; height: 24px; padding: 3px; box-sizing: border-box;
+  background: #fff; border-radius: 6px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+}
+.ic--stack img:nth-child(1) { left: 5px; transform: rotate(-14deg); }
+.ic--stack img:nth-child(2) { left: 14px; top: 9px; z-index: 1; }
+.ic--stack img:nth-child(3) { left: 23px; transform: rotate(14deg); }
+
+.stack {
+  position: fixed; z-index: 45; width: 336px; padding: 12px 14px 8px;
+  background: rgba(245, 243, 240, 0.8);
+  backdrop-filter: blur(30px) saturate(1.6);
+  -webkit-backdrop-filter: blur(30px) saturate(1.6);
+  border: 0.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 16px;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.28);
+  font-family: var(--sys); color: #2a2a2a;
+  transform-origin: var(--arrow-x, 50%) 100%;
+  animation: stack-in .16s ease-out;
+}
+.stack[hidden] { display: none; }
+.stack::after {
+  content: ""; position: absolute; top: 100%; left: var(--arrow-x, 50%); margin-left: -7px;
+  border: 7px solid transparent; border-top-color: rgba(245, 243, 240, 0.8);
+}
+@keyframes stack-in { from { opacity: 0; transform: translateY(8px) scale(.94); } }
+.stack__head { margin: 2px 2px 8px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(0, 0, 0, 0.45); }
+.stack__grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px 4px; margin-bottom: 12px; }
+.stack__item { display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 11px; text-align: center; }
+.stack__item img {
+  width: 44px; height: 44px; padding: 8px; box-sizing: border-box;
+  background: #fff; border-radius: 11px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  transition: transform .14s ease;
+}
+.stack__item:hover img { transform: translateY(-2px) scale(1.06); }
+.stack__more {
+  display: block; width: 100%; padding: 8px 0 4px; border: 0; border-top: 0.5px solid rgba(0, 0, 0, 0.12);
+  background: none; cursor: pointer; font: 12px var(--mono); color: var(--accent);
+}
+.stack__more:hover { text-decoration: underline; }
 
 .ic {
   display: grid; place-items: center;
@@ -465,6 +509,7 @@ mark { background: var(--accent-soft); color: var(--accent); border-radius: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .stack { animation: none; }
   .win, .win.is-animating, .dock__app { transition: none; }
   .greet__caret { animation: none; }
 }
