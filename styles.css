@@ -63,6 +63,18 @@ a { color: inherit; }
 .greet.is-typing .greet__caret { animation: none; }
 @keyframes blink { 50% { opacity: 0; } }
 
+/* hidden hint on the wallpaper: near-invisible until you go looking */
+.psst {
+  position: absolute; z-index: 1; left: 24px; bottom: calc(var(--dock-h) + 22px);
+  padding: 4px 6px; border: 0; background: none; cursor: pointer;
+  font: 12px/1 var(--mono); letter-spacing: .02em;
+  color: rgba(255, 255, 255, 0.13);
+  transition: color .5s ease, text-shadow .5s ease;
+}
+.psst code { font: inherit; }
+.psst:hover, .psst:focus-visible { color: rgba(255, 255, 255, 0.85); text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35); outline: none; }
+.psst:hover .psst__hash, .psst:focus-visible .psst__hash { color: var(--accent); }
+
 /* art board widget — fixed on the desktop, below windows */
 :root { --widget-w: 300px; }
 .widget {
@@ -425,19 +437,6 @@ mark { background: var(--accent-soft); color: var(--accent); border-radius: 2px;
 .ic--gh { background: linear-gradient(#2c2c2e, #0d0d0f); }
 .ic--li { background: linear-gradient(#2a8bd8, #0a66c2); font-family: var(--sys); font-size: 26px; letter-spacing: -1px; }
 .ic--mail { background: linear-gradient(#5cc6ff, #1a7fef); }
-.ic--photo { background: conic-gradient(from 0deg, #f9c74f, #f8961e, #f94144, #b5179e, #4361ee, #4cc9f0, #90be6d, #f9c74f); }
-.ic--photo svg { filter: drop-shadow(0 1px 2px rgba(0,0,0,.35)); }
-
-/* drag-and-drop overlay */
-.drop {
-  position: absolute; inset: 0; z-index: 70;
-  display: grid; place-items: center;
-  background: rgba(20, 20, 24, .45);
-  border: 3px dashed rgba(255,255,255,.7);
-  font-size: 18px; font-weight: 600; color: #fff;
-}
-.drop[hidden] { display: none; }
-
 /* lightbox for images */
 .lightbox {
   position: fixed; inset: 0; z-index: 80;
@@ -458,7 +457,7 @@ mark { background: var(--accent-soft); color: var(--accent); border-radius: 2px;
   }
   .win__bar, .term { border-radius: 0; }
   .rz { display: none; }
-  .dock, .greet, .icons, .widget { display: none; }
+  .dock, .greet, .psst, .icons, .widget { display: none; }
   .term { padding: 12px 16px 10px; font-size: 13px; }
   .welcome__photo { width: 52px; height: 52px; }
 }

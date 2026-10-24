@@ -16,14 +16,13 @@
   /* ----------------------------------------------------------
      1. CONFIG
      ---------------------------------------------------------- */
-  // Your default wallpaper. Swap the file (or this path) to change it for everyone.
-  // Visitors can still set their own via right-click / dock / `wallpaper`.
+  // The wallpaper. Swap the file (or this path) to change it.
   const WALLPAPER = "assets/wallpaper.jpg";
   // width taken on the right by the art widget (300) + one column of icons (88) + gaps
   const RIGHT_RAIL = 16 + 300 + 12 + 88;
   // width taken on the left by the staggered company icons
   const LEFT_RAIL = 28 + 76 + 88 + 16;
-  const STORE = { wall: "jy.wallpaper", win: "jy.window", hist: "jy.history", icons: "jy.icons" };
+  const STORE = { win: "jy.window", hist: "jy.history", icons: "jy.icons" };
 
   const store = {
     get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -275,74 +274,13 @@ ${skills.join(" · ")}`;
      3. WALLPAPER
      ---------------------------------------------------------- */
   const wallEl = $("wallpaper");
-  const wallInput = $("wall-file");
-
-  function applyWallpaper(src) {
-    const probe = new Image();
-    probe.onload = () => { wallEl.style.backgroundImage = `url("${src}")`; };
-    probe.src = src; // on error the gradient fallback in CSS stays
-  }
 
   function loadWallpaper() {
-    applyWallpaper(store.get(STORE.wall) || WALLPAPER);
+    try { localStorage.removeItem("jy.wallpaper"); } catch (e) {} // drop wallpapers visitors set before this was removed
+    const probe = new Image();
+    probe.onload = () => { wallEl.style.backgroundImage = `url("${WALLPAPER}")`; };
+    probe.src = WALLPAPER; // on error the gradient fallback in CSS stays
   }
-
-  // Downscale so it fits comfortably in localStorage
-  function setWallpaperFromFile(f) {
-    if (!f || !/^image\//.test(f.type)) return Promise.reject(new Error("that's not an image"));
-    return new Promise((res, rej) => {
-      const url = URL.createObjectURL(f);
-      const im = new Image();
-      im.onload = () => {
-        const max = 2560;
-        const k = Math.min(1, max / Math.max(im.width, im.height));
-        const c = document.createElement("canvas");
-        c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
-        c.getContext("2d").drawImage(im, 0, 0, c.width, c.height);
-        URL.revokeObjectURL(url);
-        let data = c.toDataURL("image/jpeg", 0.85);
-        if (!store.set(STORE.wall, data)) {
-          data = c.toDataURL("image/jpeg", 0.6); // try smaller before giving up on persisting
-          store.set(STORE.wall, data);
-        }
-        wallEl.style.backgroundImage = `url("${data}")`;
-        res(f.name);
-      };
-      im.onerror = () => { URL.revokeObjectURL(url); rej(new Error("couldn't read that image")); };
-      im.src = url;
-    });
-  }
-
-  function resetWallpaper() {
-    store.del(STORE.wall);
-    wallEl.style.backgroundImage = "";
-    applyWallpaper(WALLPAPER);
-  }
-
-  function pickWallpaper() { wallInput.value = ""; wallInput.click(); }
-
-  wallInput.addEventListener("change", () => {
-    const f = wallInput.files[0];
-    if (!f) return;
-    setWallpaperFromFile(f)
-      .then((name) => print(`<div class="blk resp resp--ok">Wallpaper set to <span class="c-img">${esc(name)}</span><span class="sub">saved in this browser · <span class="cmd-link" data-cmd="wallpaper reset">wallpaper reset</span> to undo</span></div>`))
-      .catch((e) => print(`<div class="blk resp resp--err">${esc(e.message)}</div>`));
-  });
-
-  // drag & drop an image anywhere on the desktop
-  const drop = $("drop");
-  let dragDepth = 0;
-  const hasFiles = (e) => e.dataTransfer && Array.from(e.dataTransfer.types || []).includes("Files");
-  window.addEventListener("dragenter", (e) => { if (hasFiles(e)) { dragDepth++; drop.hidden = false; } });
-  window.addEventListener("dragleave", () => { if (--dragDepth <= 0) { dragDepth = 0; drop.hidden = true; } });
-  window.addEventListener("dragover", (e) => { if (hasFiles(e)) e.preventDefault(); });
-  window.addEventListener("drop", (e) => {
-    if (!hasFiles(e)) return;
-    e.preventDefault(); dragDepth = 0; drop.hidden = true;
-    setWallpaperFromFile(e.dataTransfer.files[0])
-      .then((name) => print(`<div class="blk resp resp--ok">Wallpaper set to <span class="c-img">${esc(name)}</span></div>`))
-      .catch((err) => print(`<div class="blk resp resp--err">${esc(err.message)}</div>`));
-  });
 
   /* ----------------------------------------------------------
      4. WINDOW — drag by title bar, resize from any edge
@@ -493,9 +431,7 @@ ${skills.join(" · ")}`;
     if (!a) return;
     const act = a.dataset.action;
     hideMenus();
-    if (act === "wallpaper") pickWallpaper();
-    else if (act === "wallpaper-reset") { resetWallpaper(); print(`<div class="blk resp resp--ok">Wallpaper reset to default</div>`); }
-    else if (act === "reopen") reopen();
+    if (act === "reopen") reopen();
     else if (act === "about") { reopen(); run("cat ~/about.md"); }
   });
 
@@ -601,7 +537,6 @@ ${skills.join(" · ")}`;
     ["find <name>", "find files by name"],
     ["resume", "the whole thing on one page"],
     ["contact", "how to reach me"],
-    ["wallpaper [reset]", "pick your own desktop background"],
     ["whoami · pwd · history · clear", ""],
   ];
 
@@ -720,12 +655,6 @@ ${skills.join(" · ")}`;
     echo(args) { ok(esc(args.join(" "))); },
     clear() { out.innerHTML = ""; focus = null; },
     history() { ok(history.map((h, i) => `<span class="c-dim">${String(i + 1).padStart(4)}</span>  <span class="cmd-link" data-cmd="${esc(h)}">${esc(h)}</span>`).join("\n") || "<span class='c-dim'>(empty)</span>"); },
-
-    wallpaper(args) {
-      if (args[0] === "reset") { resetWallpaper(); return resp("Wallpaper reset to default", "ok"); }
-      resp(`Pick an image to use as your wallpaper.<span class="sub">You can also drag a photo onto the desktop, or right-click the desktop.</span>`);
-      pickWallpaper();
-    },
 
     exit() { enterShell(); },
     sudo() { err("jasmine is not in the sudoers file. This incident will be reported."); },
@@ -941,7 +870,6 @@ ${["about.md", "experience", "projects", "education", "play", "contact.md"].map(
   }
 
   input.addEventListener("keydown", (e) => {
-    if (anim) { e.preventDefault(); stopAnim(true); return; }
     if (busy) { e.preventDefault(); return; }
     if (e.key === "Enter") { const v = input.value; input.value = ""; run(v); }
     else if (e.key === "c" && e.ctrlKey && mode === "shell") { e.preventDefault(); shellEcho(input.value + "^C"); input.value = ""; }
@@ -1040,6 +968,14 @@ type <span class="c-acc">help</span> to see what's in here.`);
     anim = { iv: setInterval(tick, 1000 / (A.fps || 20)), hint };
     tick();
   }
+
+  // the prompt is hidden while an animation plays, so the input loses focus;
+  // listen on the window so any key still stops it
+  window.addEventListener("keydown", (e) => {
+    if (!anim || ["Shift", "Control", "Alt", "Meta", "CapsLock"].includes(e.key)) return;
+    e.preventDefault(); e.stopPropagation();
+    stopAnim(true);
+  }, true);
 
   function stopAnim(interrupted) {
     if (!anim) return;
@@ -1192,6 +1128,9 @@ type <span class="c-acc">help</span> to see what's in here.`);
     run(ic.cmd);
     if (ic.after) ic.after();
   }
+
+  // the faint "# psst" hint on the wallpaper opens the secret
+  $("psst").addEventListener("click", (e) => openIcon({ cmd: e.currentTarget.dataset.cmd }));
 
   function initIcons() {
     const box = $("icons");
